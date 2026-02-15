@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Hand History Whiteboard — Recorder Mockup</title>
+<title>Hand History Whiteboard — Mockups</title>
 <style>
   :root {
     --bg: #0f1117;
@@ -17,71 +17,91 @@
     --blue: #2563eb;
     --purple: #7c3aed;
     --border: #374151;
-    --panel-width: 120px;
-    --panel-active-width: 160px;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
-    background: var(--bg);
+    background: #000;
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    max-width: 430px;
-    margin: 0 auto;
-    position: relative;
+    padding: 20px;
   }
 
-  /* ===== HEADER ===== */
+  /* ===== PICKER ===== */
+  .picker {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .picker-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .picker-btn.active { border-color: var(--amber); color: var(--amber); }
+
+  .mockup-frame {
+    display: none;
+    margin: 0 auto;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 3px solid #333;
+    background: var(--bg);
+    position: relative;
+  }
+  .mockup-frame.visible { display: flex; flex-direction: column; }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 390px;
+    height: 844px;
+  }
+  /* Tablet frame */
+  .tablet-frame {
+    width: 820px;
+    height: 600px;
+  }
+
+  .frame-label {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+
+  /* ===== SHARED STYLES ===== */
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 10px 16px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
   }
-  .header h1 { font-size: 16px; font-weight: 600; }
-  .header .close-btn {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    background: var(--bg-tertiary);
-    border: none;
-    color: var(--text-muted);
-    font-size: 18px;
-    cursor: pointer;
+  .header h1 { font-size: 15px; font-weight: 600; }
+  .close-btn {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--bg-tertiary); border: none;
+    color: var(--text-muted); font-size: 16px; cursor: pointer;
   }
 
-  /* ===== STREET INDICATOR ===== */
   .street-indicator {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 16px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
-    font-size: 12px;
-    flex-shrink: 0;
-    overflow-x: auto;
+    font-size: 11px; flex-shrink: 0;
   }
-  .street-dot {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-  }
-  .street-dot .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--border);
-    flex-shrink: 0;
-  }
+  .street-dot { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .street-dot .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
   .street-dot.active .dot { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
   .street-dot.complete .dot { background: var(--green); }
   .street-dot.active .label { color: var(--amber); font-weight: 600; }
@@ -89,869 +109,699 @@
   .street-dot .label { color: var(--text-muted); }
   .street-arrow { color: var(--border); font-size: 10px; }
 
-  /* ===== COMMUNITY CARDS ===== */
   .community-cards {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 16px;
-    background: var(--bg);
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 5px; padding: 8px 16px; background: var(--bg); flex-shrink: 0;
   }
   .card-slot {
-    width: 44px;
-    height: 60px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
+    width: 40px; height: 54px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
   }
-  .card-slot.dealt {
-    background: #fff;
-    color: #111;
-    flex-direction: column;
-    gap: 0;
-    line-height: 1;
-  }
-  .card-slot.dealt .rank { font-size: 16px; font-weight: 800; }
-  .card-slot.dealt .suit { font-size: 18px; }
-  .card-slot.empty {
-    border: 2px dashed var(--border);
-    color: var(--text-muted);
-    font-size: 16px;
-  }
+  .card-slot.dealt { background: #fff; color: #111; flex-direction: column; line-height: 1; }
+  .card-slot.dealt .rank { font-size: 14px; font-weight: 800; }
+  .card-slot.dealt .suit { font-size: 16px; }
+  .card-slot.empty { border: 2px dashed var(--border); color: var(--text-muted); font-size: 14px; }
   .suit-s { color: #6b7280 !important; }
   .suit-h { color: #ef4444 !important; }
   .suit-d { color: #3b82f6 !important; }
   .suit-c { color: #22c55e !important; }
 
-  /* ===== TIMELINE ===== */
-  .timeline-container {
-    flex: 1;
-    overflow-x: auto;
-    overflow-y: hidden;
+  /* ===================================
+     MOBILE — Vertical Action Feed
+     =================================== */
+  .mobile-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+  .action-feed {
+    flex: 1; overflow-y: auto; padding: 8px 12px;
+    display: flex; flex-direction: column; gap: 3px;
     -webkit-overflow-scrolling: touch;
-    padding: 12px 0 12px 12px;
-    display: flex;
-    align-items: stretch;
-    gap: 8px;
-    scroll-behavior: smooth;
-    min-height: 0;
+  }
+  .action-feed::-webkit-scrollbar { display: none; }
+
+  /* Street divider in feed */
+  .feed-street-divider {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0; margin: 4px 0;
+  }
+  .feed-street-divider .line { flex: 1; height: 1px; background: var(--border); }
+  .feed-street-divider .street-label {
+    font-size: 10px; font-weight: 700; color: var(--blue);
+    text-transform: uppercase; letter-spacing: 1px;
+    padding: 2px 8px; background: rgba(37,99,235,0.1);
+    border-radius: 4px;
+  }
+
+  /* Action row in feed */
+  .feed-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 8px;
+    background: var(--bg-secondary);
+    transition: all 0.15s;
+  }
+  .feed-row.hero { border-left: 3px solid var(--amber); }
+  .feed-row.folded { opacity: 0.45; }
+
+  .feed-pos {
+    font-size: 11px; font-weight: 700; width: 32px;
+    text-align: center; padding: 3px 0; border-radius: 4px;
+    background: var(--bg-tertiary); color: var(--text-muted); flex-shrink: 0;
+  }
+  .feed-action-icon { font-size: 12px; width: 18px; text-align: center; flex-shrink: 0; }
+  .feed-action-text { flex: 1; font-size: 13px; font-weight: 500; }
+  .feed-action-text.fold-text { color: var(--red); }
+  .feed-action-text.call-text { color: var(--green); }
+  .feed-action-text.check-text { color: var(--green); }
+  .feed-action-text.raise-text { color: var(--amber); }
+  .feed-action-text.bet-text { color: var(--amber); }
+  .feed-action-text.post-text { color: var(--text-muted); }
+  .feed-action-text.allin-text { color: var(--purple); }
+  .feed-stack { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+  .feed-pot { font-size: 11px; color: var(--amber); flex-shrink: 0; min-width: 28px; text-align: right; }
+
+  /* Compressed fold group */
+  .feed-fold-group {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border-radius: 8px;
+    background: var(--bg-secondary); opacity: 0.45;
+  }
+  .fold-group-positions {
+    display: flex; gap: 3px;
+  }
+  .fold-group-positions .mini-pos {
+    font-size: 9px; font-weight: 700; padding: 2px 5px;
+    border-radius: 3px; background: var(--bg-tertiary); color: var(--text-muted);
+  }
+  .fold-group-label { font-size: 11px; color: var(--red); flex: 1; }
+  .fold-group-expand {
+    font-size: 10px; color: var(--text-muted); cursor: pointer;
+    background: none; border: none; padding: 2px 4px;
+  }
+
+  /* Decision context (expandable) */
+  .feed-row .decision-context {
+    display: none;
+    padding: 6px 0 0;
+  }
+  .feed-row.expanded .decision-context { display: block; }
+  .decision-options {
+    display: flex; gap: 4px; flex-wrap: wrap;
+  }
+  .decision-opt {
+    font-size: 9px; padding: 2px 6px; border-radius: 4px;
+    background: var(--bg-tertiary); color: var(--text-muted);
+  }
+  .decision-opt.was-chosen { font-weight: 700; }
+  .decision-opt.was-chosen.fold-opt { background: rgba(220,38,38,0.15); color: var(--red); }
+  .decision-opt.was-chosen.call-opt { background: rgba(22,163,74,0.15); color: var(--green); }
+  .decision-opt.was-chosen.raise-opt { background: rgba(217,119,6,0.15); color: var(--amber); }
+
+  /* Mobile bottom */
+  .mobile-bottom {
+    flex-shrink: 0; background: var(--bg-secondary);
+    border-top: 1px solid var(--border); padding: 8px 14px 16px;
+  }
+  .pot-row {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+  }
+  .pot-label { font-size: 11px; color: var(--text-muted); }
+  .pot-value { font-size: 16px; font-weight: 800; color: var(--amber); }
+
+  .active-info {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; background: var(--bg-tertiary);
+    border-radius: 8px; margin-bottom: 8px;
+  }
+  .active-info .pos-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 7px;
+    border-radius: 4px; background: var(--green); color: #fff;
+  }
+  .active-info .name { font-size: 12px; font-weight: 600; }
+  .active-info .detail { font-size: 10px; color: var(--text-muted); }
+
+  .mobile-actions {
+    display: flex; gap: 6px;
+  }
+  .m-action-btn {
+    flex: 1; padding: 14px 6px; border-radius: 10px;
+    border: none; font-size: 14px; font-weight: 700;
+    cursor: pointer; color: #fff;
+  }
+  .m-action-btn:active { transform: scale(0.96); }
+  .m-btn-fold { background: #374151; color: #9ca3af; }
+  .m-btn-call { background: var(--green); }
+  .m-btn-raise { background: var(--blue); }
+
+  .mobile-bet-input {
+    display: none; margin-top: 8px; padding: 8px 10px;
+    background: var(--bg-tertiary); border-radius: 8px;
+  }
+  .mobile-bet-input.visible { display: block; }
+  .mbi-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .mbi-row label { font-size: 11px; color: var(--text-muted); }
+  .mbi-row input {
+    flex: 1; padding: 8px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--text); font-size: 14px; font-weight: 600; text-align: right;
+  }
+  .mbi-row .unit { font-size: 11px; color: var(--text-muted); }
+  .mbi-presets { display: flex; gap: 4px; }
+  .mbi-preset {
+    flex: 1; padding: 7px 4px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--bg);
+    color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer;
+  }
+
+  .m-undo {
+    display: flex; align-items: center; gap: 6px; margin-top: 6px;
+    padding: 7px 10px; border-radius: 8px; background: transparent;
+    border: 1px solid var(--border); color: var(--text-muted);
+    font-size: 10px; cursor: pointer; width: 100%;
+  }
+
+  /* ===================================
+     TABLET — Horizontal Timeline
+     =================================== */
+  .tablet-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+  .timeline-container {
+    flex: 1; overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 0 10px 10px;
+    display: flex; align-items: stretch; gap: 7px;
+    scroll-behavior: smooth; min-height: 0;
   }
   .timeline-container::-webkit-scrollbar { display: none; }
 
-  /* Panel base */
   .panel {
-    min-width: var(--panel-width);
-    max-width: var(--panel-width);
-    background: var(--bg-secondary);
-    border-radius: 12px;
-    border: 2px solid var(--border);
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-    position: relative;
+    min-width: 130px; max-width: 130px;
+    background: var(--bg-secondary); border-radius: 10px;
+    border: 2px solid var(--border); padding: 8px;
+    display: flex; flex-direction: column; gap: 4px;
+    flex-shrink: 0; transition: all 0.2s; position: relative;
   }
-
-  /* Setup panel */
   .panel.setup {
-    min-width: 100px;
-    max-width: 100px;
-    background: var(--bg-tertiary);
-    border-color: var(--border);
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    min-width: 90px; max-width: 90px; background: var(--bg-tertiary);
+    justify-content: center; align-items: center; text-align: center;
   }
-  .panel.setup .game-info { font-size: 11px; color: var(--text-muted); }
-  .panel.setup .game-type { font-size: 14px; font-weight: 700; color: var(--text); }
+  .panel.setup .game-type { font-size: 13px; font-weight: 700; }
+  .panel.setup .game-info { font-size: 10px; color: var(--text-muted); }
   .panel.setup .edit-btn {
-    margin-top: 4px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-size: 10px;
-    cursor: pointer;
+    margin-top: 3px; padding: 3px 8px; border-radius: 5px;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    color: var(--text-muted); font-size: 9px; cursor: pointer;
   }
-
-  /* Active panel */
   .panel.active {
-    min-width: var(--panel-active-width);
-    max-width: var(--panel-active-width);
-    border-color: var(--green);
-    box-shadow: 0 0 12px rgba(22, 163, 74, 0.3);
+    min-width: 160px; max-width: 160px;
+    border-color: var(--green); box-shadow: 0 0 12px rgba(22,163,74,0.25);
   }
+  .panel.folded { opacity: 0.45; }
 
-  /* Folded panel */
-  .panel.folded { opacity: 0.5; }
-  .panel.folded .fold-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--red);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    opacity: 0.8;
-  }
-
-  /* Compressed folds */
   .panel.compressed {
-    min-width: 80px;
-    max-width: 80px;
-    padding: 6px 8px;
-    gap: 2px;
+    min-width: 80px; max-width: 80px; padding: 6px; gap: 1px;
   }
+  .compressed-label { font-size: 9px; color: var(--text-muted); font-weight: 600; margin-bottom: 1px; }
   .compressed-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 10px;
-    padding: 2px 0;
-    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 9px; padding: 2px 0; border-bottom: 1px solid var(--border);
   }
   .compressed-row:last-child { border-bottom: none; }
-  .compressed-row .pos { font-weight: 600; color: var(--text-muted); }
-  .compressed-row .action { color: var(--red); font-size: 9px; }
-  .compressed-row .stack { color: var(--text-muted); font-size: 9px; }
+  .compressed-row .c-pos { font-weight: 600; color: var(--text-muted); }
+  .compressed-row .c-action { color: var(--red); font-size: 8px; }
+  .compressed-row .c-stack { color: var(--text-muted); font-size: 8px; }
 
-  /* Panel internals */
-  .panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; }
   .position-badge {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: var(--bg-tertiary);
+    font-size: 10px; font-weight: 700; padding: 2px 5px;
+    border-radius: 3px; background: var(--bg-tertiary);
   }
-  .stack {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-  .player-name {
-    font-size: 11px;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .hero-badge {
-    font-size: 9px;
-    color: var(--amber);
-    font-weight: 600;
-  }
+  .stack { font-size: 10px; color: var(--text-muted); }
+  .player-name { font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hero-badge { font-size: 8px; color: var(--amber); font-weight: 600; }
   .acting-badge {
-    font-size: 9px;
-    font-weight: 700;
-    color: var(--green);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    font-size: 8px; font-weight: 700; color: var(--green);
+    letter-spacing: 0.5px; text-transform: uppercase;
     animation: pulse 1.5s ease-in-out infinite;
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-  /* Action options (GTO Wizard style) */
-  .action-options {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    margin-top: 2px;
+  .hole-cards { display: flex; gap: 2px; margin: 1px 0; }
+  .hole-card {
+    width: 22px; height: 30px; border-radius: 3px; background: #fff;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; font-size: 7px; font-weight: 700; line-height: 1;
   }
+  .hole-card .rank { font-size: 9px; }
+  .hole-card .suit { font-size: 10px; }
+
+  .action-options { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
   .action-option {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 500;
-    background: transparent;
-    color: var(--text-muted);
-    opacity: 0.4;
-    transition: all 0.15s;
+    display: flex; align-items: center; gap: 3px;
+    padding: 3px 5px; border-radius: 4px;
+    font-size: 9px; font-weight: 500; background: transparent;
+    color: var(--text-muted); opacity: 0.35;
   }
-  .action-option.chosen {
-    opacity: 1;
-    font-weight: 700;
-  }
-  .action-option.chosen.fold { background: rgba(220, 38, 38, 0.15); color: var(--red); }
-  .action-option.chosen.call { background: rgba(22, 163, 74, 0.15); color: var(--green); }
-  .action-option.chosen.check { background: rgba(22, 163, 74, 0.15); color: var(--green); }
-  .action-option.chosen.raise { background: rgba(217, 119, 6, 0.15); color: var(--amber); }
-  .action-option.chosen.bet { background: rgba(217, 119, 6, 0.15); color: var(--amber); }
-  .action-option.chosen.allin { background: rgba(124, 58, 237, 0.15); color: var(--purple); }
-  .action-option.chosen.post { background: rgba(107, 114, 128, 0.15); color: var(--text-muted); opacity: 0.8; }
-
-  /* Active panel action buttons */
+  .action-option.chosen { opacity: 1; font-weight: 700; }
+  .action-option.chosen.fold { background: rgba(220,38,38,0.15); color: var(--red); }
+  .action-option.chosen.call { background: rgba(22,163,74,0.15); color: var(--green); }
+  .action-option.chosen.check { background: rgba(22,163,74,0.15); color: var(--green); }
+  .action-option.chosen.raise { background: rgba(217,119,6,0.15); color: var(--amber); }
+  .action-option.chosen.bet { background: rgba(217,119,6,0.15); color: var(--amber); }
+  .action-option.chosen.post { background: rgba(107,114,128,0.1); color: var(--text-muted); opacity: 0.7; }
   .action-option.available {
-    opacity: 1;
-    cursor: pointer;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border);
-    color: var(--text);
+    opacity: 1; cursor: pointer; background: var(--bg-tertiary);
+    border: 1px solid var(--border); color: var(--text);
   }
-  .action-option.available:active {
-    transform: scale(0.95);
-  }
+  .action-option.available:active { transform: scale(0.95); }
   .action-option.available.fold-btn { border-color: var(--red); color: var(--red); }
   .action-option.available.call-btn { border-color: var(--green); color: var(--green); }
-  .action-option.available.check-btn { border-color: var(--green); color: var(--green); }
   .action-option.available.raise-btn { border-color: var(--amber); color: var(--amber); }
 
-  .action-icon { font-size: 10px; width: 14px; text-align: center; }
-
-  /* Board deal panel */
-  .panel.deal {
-    min-width: var(--panel-active-width);
-    max-width: var(--panel-active-width);
-    border-color: var(--blue);
-    box-shadow: 0 0 12px rgba(37, 99, 235, 0.2);
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+  .panel.street-marker {
+    min-width: 52px; max-width: 52px;
+    justify-content: center; align-items: center;
+    background: rgba(37,99,235,0.08); border-color: var(--blue);
   }
-  .deal-icon { font-size: 28px; margin-bottom: 4px; }
-  .deal-label { font-size: 13px; font-weight: 600; }
-  .deal-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .street-marker .sm-icon { font-size: 18px; }
+  .street-marker .sm-label { font-size: 9px; font-weight: 700; color: var(--blue); }
 
-  /* ===== BOTTOM AREA ===== */
-  .bottom-area {
-    flex-shrink: 0;
-    background: var(--bg-secondary);
+  /* Tablet bottom */
+  .tablet-bottom {
+    flex-shrink: 0; background: var(--bg-secondary);
     border-top: 1px solid var(--border);
-    padding: 10px 16px 20px;
+    padding: 8px 16px 12px;
+    display: flex; align-items: center; gap: 16px;
   }
-
-  /* Current pot */
-  .current-pot {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+  .tb-pot { font-size: 14px; font-weight: 800; color: var(--amber); white-space: nowrap; }
+  .tb-active-info {
+    display: flex; align-items: center; gap: 6px; flex: 1;
   }
-  .pot-label { font-size: 12px; color: var(--text-muted); }
-  .pot-value { font-size: 18px; font-weight: 800; color: var(--amber); }
-
-  /* Active player info */
-  .active-player-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: var(--bg-tertiary);
-    border-radius: 8px;
-    margin-bottom: 8px;
+  .tb-pos-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 7px;
+    border-radius: 4px; background: var(--green); color: #fff;
   }
-  .active-player-info .pos-badge {
-    font-size: 12px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: var(--green);
-    color: #fff;
+  .tb-info .name { font-size: 12px; font-weight: 600; }
+  .tb-info .detail { font-size: 10px; color: var(--text-muted); }
+  .tb-actions { display: flex; gap: 5px; }
+  .tb-btn {
+    padding: 10px 16px; border-radius: 8px; border: none;
+    font-size: 13px; font-weight: 700; cursor: pointer; color: #fff;
   }
-  .active-player-info .info-text { font-size: 12px; }
-  .active-player-info .info-text .name { font-weight: 600; }
-  .active-player-info .info-text .detail { color: var(--text-muted); font-size: 11px; }
-
-  /* Action buttons */
-  .action-buttons {
-    display: flex;
-    gap: 6px;
-  }
-  .action-btn {
-    flex: 1;
-    padding: 12px 8px;
-    border-radius: 10px;
-    border: none;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.1s;
-    color: #fff;
-  }
-  .action-btn:active { transform: scale(0.95); }
-  .btn-fold { background: #374151; color: #9ca3af; }
-  .btn-call { background: var(--green); }
-  .btn-raise { background: var(--blue); }
-  .btn-check { background: var(--green); }
-
-  /* Bet input */
-  .bet-input-area {
-    display: none;
-    margin-top: 8px;
-    padding: 10px;
-    background: var(--bg-tertiary);
-    border-radius: 8px;
-  }
-  .bet-input-area.visible { display: block; }
-  .bet-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
-  .bet-row label { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-  .bet-row input {
-    flex: 1;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text);
-    font-size: 14px;
-    font-weight: 600;
-    text-align: right;
-  }
-  .bet-row .unit { font-size: 12px; color: var(--text-muted); }
-  .presets {
-    display: flex;
-    gap: 4px;
-  }
-  .preset-btn {
-    flex: 1;
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text-muted);
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .preset-btn:active { background: var(--bg-tertiary); color: var(--text); }
-
-  /* Undo */
-  .undo-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 8px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-size: 11px;
-    cursor: pointer;
-    width: 100%;
-  }
-  .undo-btn:active { background: var(--bg-tertiary); }
-
-  /* ===== TABS ===== */
-  .view-tabs {
-    display: flex;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .view-tab {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    background: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-  }
-  .view-tab.active {
-    color: var(--amber);
-    border-bottom-color: var(--amber);
-  }
-
-  /* ===== WHITEBOARD VIEW ===== */
-  .whiteboard-view {
-    display: none;
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-  }
-  .whiteboard-view.visible { display: block; }
-  .recorder-view { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-  .recorder-view.hidden { display: none; }
-
-  .wb-street {
-    margin-bottom: 16px;
-  }
-  .wb-street-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 8px;
-  }
-  .wb-street-name {
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .wb-street-pot {
-    font-size: 11px;
-    color: var(--amber);
-    font-weight: 600;
-  }
-  .wb-action-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    border-radius: 6px;
-    margin-bottom: 2px;
-  }
-  .wb-action-row:nth-child(odd) { background: var(--bg-secondary); }
-  .wb-pos { font-size: 11px; font-weight: 700; width: 36px; color: var(--text-muted); }
-  .wb-icon { width: 16px; text-align: center; font-size: 12px; }
-  .wb-text { flex: 1; font-size: 12px; }
-  .wb-stack { font-size: 11px; color: var(--text-muted); font-weight: 500; }
-  .wb-pot { font-size: 11px; color: var(--amber); font-weight: 500; }
-
-  .wb-board {
-    display: flex;
-    gap: 4px;
-    margin: 6px 0 8px;
-  }
-  .wb-card {
-    width: 32px;
-    height: 44px;
-    border-radius: 4px;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 1;
-  }
-  .wb-card .rank { font-size: 12px; }
-  .wb-card .suit { font-size: 14px; }
-
-  /* Mode indicator */
-  .mode-label {
-    position: absolute;
-    top: 50px;
-    right: 12px;
-    background: rgba(217, 119, 6, 0.15);
-    color: var(--amber);
-    font-size: 9px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-    z-index: 10;
-  }
-
-  /* Hole cards in panel */
-  .hole-cards {
-    display: flex;
-    gap: 3px;
-    margin: 2px 0;
-  }
-  .hole-card {
-    width: 24px;
-    height: 32px;
-    border-radius: 3px;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-    font-weight: 700;
-    line-height: 1;
-  }
-  .hole-card .rank { font-size: 10px; }
-  .hole-card .suit { font-size: 11px; }
-  .hole-card.unknown {
-    background: var(--bg-tertiary);
-    border: 1px dashed var(--border);
-    color: var(--text-muted);
-    font-size: 10px;
+  .tb-btn:active { transform: scale(0.96); }
+  .tb-btn-fold { background: #374151; color: #9ca3af; }
+  .tb-btn-call { background: var(--green); }
+  .tb-btn-raise { background: var(--blue); }
+  .tb-undo {
+    padding: 8px 12px; border-radius: 8px; background: transparent;
+    border: 1px solid var(--border); color: var(--text-muted);
+    font-size: 10px; cursor: pointer; white-space: nowrap;
   }
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="header">
-  <h1>🃏 Recording Hand</h1>
-  <button class="close-btn">✕</button>
+<!-- View Picker -->
+<div class="picker">
+  <button class="picker-btn active" onclick="showMockup('mobile')">📱 Mobile (390px)</button>
+  <button class="picker-btn" onclick="showMockup('tablet')">📟 Tablet (820px)</button>
 </div>
 
-<!-- View Tabs -->
-<div class="view-tabs">
-  <button class="view-tab active" onclick="showView('recorder')">🎬 Record</button>
-  <button class="view-tab" onclick="showView('whiteboard')">📋 Review</button>
-</div>
+<!-- ===================================
+     MOBILE MOCKUP
+     =================================== -->
+<div class="frame-label" id="mobile-label">iPhone 15 — 390 × 844</div>
+<div class="mockup-frame phone-frame visible" id="mobile-mockup">
 
-<!-- ===== RECORDER VIEW ===== -->
-<div class="recorder-view" id="recorder-view">
+  <div class="header">
+    <h1>🃏 Recording Hand</h1>
+    <button class="close-btn">✕</button>
+  </div>
 
-  <!-- Street Indicator (thin bar) -->
   <div class="street-indicator">
-    <div class="street-dot complete">
-      <span class="dot"></span>
-      <span class="label">PRE 3bb</span>
-    </div>
+    <div class="street-dot complete"><span class="dot"></span><span class="label">PRE 3bb</span></div>
     <span class="street-arrow">→</span>
-    <div class="street-dot active">
-      <span class="dot"></span>
-      <span class="label">FLOP 12bb</span>
-    </div>
+    <div class="street-dot active"><span class="dot"></span><span class="label">FLOP 12bb</span></div>
     <span class="street-arrow">→</span>
-    <div class="street-dot">
-      <span class="dot"></span>
-      <span class="label">TURN</span>
-    </div>
+    <div class="street-dot"><span class="dot"></span><span class="label">TURN</span></div>
     <span class="street-arrow">→</span>
-    <div class="street-dot">
-      <span class="dot"></span>
-      <span class="label">RIVER</span>
-    </div>
+    <div class="street-dot"><span class="dot"></span><span class="label">RIVER</span></div>
   </div>
 
-  <!-- Community Cards -->
   <div class="community-cards">
-    <div class="card-slot dealt">
-      <span class="rank">A</span>
-      <span class="suit suit-d">♦</span>
-    </div>
-    <div class="card-slot dealt">
-      <span class="rank">7</span>
-      <span class="suit suit-c">♣</span>
-    </div>
-    <div class="card-slot dealt">
-      <span class="rank">2</span>
-      <span class="suit suit-h">♥</span>
-    </div>
+    <div class="card-slot dealt"><span class="rank">A</span><span class="suit suit-d">♦</span></div>
+    <div class="card-slot dealt"><span class="rank">7</span><span class="suit suit-c">♣</span></div>
+    <div class="card-slot dealt"><span class="rank">2</span><span class="suit suit-h">♥</span></div>
     <div class="card-slot empty">?</div>
     <div class="card-slot empty">?</div>
   </div>
 
-  <!-- Horizontal Scroll Timeline -->
-  <div class="timeline-container" id="timeline">
+  <div class="mobile-body">
+    <!-- Action Feed -->
+    <div class="action-feed" id="mobile-feed">
 
-    <!-- Setup Panel -->
-    <div class="panel setup">
-      <div class="game-type">NLHE</div>
-      <div class="game-info">6 players</div>
-      <div class="game-info">1/2 bb</div>
-      <button class="edit-btn">Edit</button>
+      <div class="feed-street-divider">
+        <div class="line"></div>
+        <span class="street-label">Preflop · 3bb</span>
+        <div class="line"></div>
+      </div>
+
+      <!-- Blinds -->
+      <div class="feed-row">
+        <span class="feed-pos">SB</span>
+        <span class="feed-action-icon">📤</span>
+        <span class="feed-action-text post-text">Post 1</span>
+        <span class="feed-stack">199</span>
+        <span class="feed-pot">3</span>
+      </div>
+      <div class="feed-row">
+        <span class="feed-pos">BB</span>
+        <span class="feed-action-icon">📤</span>
+        <span class="feed-action-text post-text">Post 2</span>
+        <span class="feed-stack">198</span>
+        <span class="feed-pot">3</span>
+      </div>
+
+      <!-- Compressed folds -->
+      <div class="feed-fold-group" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'flex' : 'none'; this.style.display = 'none';">
+        <span class="feed-action-icon">🔴</span>
+        <div class="fold-group-positions">
+          <span class="mini-pos">UTG</span>
+          <span class="mini-pos">HJ</span>
+        </div>
+        <span class="fold-group-label">fold</span>
+        <button class="fold-group-expand">▼</button>
+      </div>
+      <!-- Expanded (hidden by default) -->
+      <div style="display:none; flex-direction:column; gap:3px;">
+        <div class="feed-row folded">
+          <span class="feed-pos">UTG</span><span class="feed-action-icon">🔴</span>
+          <span class="feed-action-text fold-text">Fold</span>
+          <span class="feed-stack">200</span><span class="feed-pot">3</span>
+        </div>
+        <div class="feed-row folded">
+          <span class="feed-pos">HJ</span><span class="feed-action-icon">🔴</span>
+          <span class="feed-action-text fold-text">Fold</span>
+          <span class="feed-stack">200</span><span class="feed-pot">3</span>
+        </div>
+      </div>
+
+      <!-- CO Hero raise -->
+      <div class="feed-row hero" onclick="this.classList.toggle('expanded')" style="flex-wrap:wrap;">
+        <span class="feed-pos">CO</span>
+        <span class="feed-action-icon">🟡</span>
+        <span class="feed-action-text raise-text">Raise 6 ⭐</span>
+        <span class="feed-stack">194</span>
+        <span class="feed-pot">9</span>
+        <div class="decision-context" style="width:100%;padding-left:40px;">
+          <div class="decision-options">
+            <span class="decision-opt">🔴 Fold</span>
+            <span class="decision-opt">🟢 Call 2</span>
+            <span class="decision-opt was-chosen raise-opt">🟡 Raise 6 ✓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BTN + SB folds -->
+      <div class="feed-fold-group">
+        <span class="feed-action-icon">🔴</span>
+        <div class="fold-group-positions">
+          <span class="mini-pos">BTN</span>
+          <span class="mini-pos">SB</span>
+        </div>
+        <span class="fold-group-label">fold</span>
+        <button class="fold-group-expand">▼</button>
+      </div>
+
+      <!-- BB call -->
+      <div class="feed-row" onclick="this.classList.toggle('expanded')" style="flex-wrap:wrap;">
+        <span class="feed-pos">BB</span>
+        <span class="feed-action-icon">🟢</span>
+        <span class="feed-action-text call-text">Call 4</span>
+        <span class="feed-stack">194</span>
+        <span class="feed-pot">12</span>
+        <div class="decision-context" style="width:100%;padding-left:40px;">
+          <div class="decision-options">
+            <span class="decision-opt">🔴 Fold</span>
+            <span class="decision-opt was-chosen call-opt">🟢 Call 4 ✓</span>
+            <span class="decision-opt">🟡 3-Bet</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flop divider -->
+      <div class="feed-street-divider">
+        <div class="line"></div>
+        <span class="street-label">Flop · A♦ 7♣ 2♥ · 12bb</span>
+        <div class="line"></div>
+      </div>
+
+      <!-- BB check -->
+      <div class="feed-row">
+        <span class="feed-pos">BB</span>
+        <span class="feed-action-icon">✅</span>
+        <span class="feed-action-text check-text">Check</span>
+        <span class="feed-stack">194</span>
+        <span class="feed-pot">12</span>
+      </div>
+
+      <!-- CO hero bet -->
+      <div class="feed-row hero" onclick="this.classList.toggle('expanded')" style="flex-wrap:wrap;">
+        <span class="feed-pos">CO</span>
+        <span class="feed-action-icon">🟡</span>
+        <span class="feed-action-text bet-text">Bet 8 ⭐</span>
+        <span class="feed-stack">186</span>
+        <span class="feed-pot">20</span>
+        <div class="decision-context" style="width:100%;padding-left:40px;">
+          <div class="decision-options">
+            <span class="decision-opt">✅ Check</span>
+            <span class="decision-opt was-chosen raise-opt">🟡 Bet 8 ✓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom spacing -->
+      <div style="height: 8px;"></div>
     </div>
 
-    <!-- SB — Post blind -->
-    <div class="panel acted">
-      <div class="panel-header">
-        <span class="position-badge">SB</span>
-        <span class="stack">199</span>
+    <!-- Mobile Bottom -->
+    <div class="mobile-bottom">
+      <div class="pot-row">
+        <span class="pot-label">Pot</span>
+        <span class="pot-value">20 bb</span>
       </div>
-      <div class="player-name">Player 1</div>
-      <div class="action-options">
-        <div class="action-option chosen post"><span class="action-icon">📤</span> Post 1</div>
+
+      <div class="active-info">
+        <span class="pos-badge">BB</span>
+        <div>
+          <div class="name">Player 2</div>
+          <div class="detail">Stack: 194 bb · To call: 8 bb</div>
+        </div>
       </div>
+
+      <div class="mobile-actions">
+        <button class="m-action-btn m-btn-fold">✕ FOLD</button>
+        <button class="m-action-btn m-btn-call">CALL 8</button>
+        <button class="m-action-btn m-btn-raise" onclick="document.getElementById('m-bet').classList.toggle('visible')">RAISE</button>
+      </div>
+
+      <div class="mobile-bet-input" id="m-bet">
+        <div class="mbi-row">
+          <label>Raise to:</label>
+          <input type="number" value="16" min="16" max="194">
+          <span class="unit">bb</span>
+        </div>
+        <div class="mbi-presets">
+          <button class="mbi-preset">33%</button>
+          <button class="mbi-preset">50%</button>
+          <button class="mbi-preset">75%</button>
+          <button class="mbi-preset">Pot</button>
+          <button class="mbi-preset">All-in</button>
+        </div>
+      </div>
+
+      <button class="m-undo">↶ Undo: CO bet 8 bb</button>
     </div>
-
-    <!-- BB — Post blind -->
-    <div class="panel acted">
-      <div class="panel-header">
-        <span class="position-badge">BB</span>
-        <span class="stack">198</span>
-      </div>
-      <div class="player-name">Player 2</div>
-      <div class="action-options">
-        <div class="action-option chosen post"><span class="action-icon">📤</span> Post 2</div>
-      </div>
-    </div>
-
-    <!-- Compressed folds: UTG + HJ -->
-    <div class="panel compressed">
-      <div style="font-size:9px;color:var(--text-muted);font-weight:600;margin-bottom:2px;">2 folds</div>
-      <div class="compressed-row">
-        <span class="pos">UTG</span>
-        <span class="action">Fold</span>
-        <span class="stack">[200]</span>
-      </div>
-      <div class="compressed-row">
-        <span class="pos">HJ</span>
-        <span class="action">Fold</span>
-        <span class="stack">[200]</span>
-      </div>
-    </div>
-
-    <!-- CO (Hero) — Raise 6 -->
-    <div class="panel acted">
-      <div class="panel-header">
-        <span class="position-badge">CO</span>
-        <span class="stack">194</span>
-      </div>
-      <div class="player-name">Robert <span class="hero-badge">⭐ HERO</span></div>
-      <div class="hole-cards">
-        <div class="hole-card"><span class="rank">A</span><span class="suit suit-s">♠</span></div>
-        <div class="hole-card"><span class="rank">K</span><span class="suit suit-h">♥</span></div>
-      </div>
-      <div class="action-options">
-        <div class="action-option fold">🔴 Fold</div>
-        <div class="action-option call">🟢 Call 2</div>
-        <div class="action-option chosen raise">🟡 Raise 6</div>
-      </div>
-    </div>
-
-    <!-- BTN — Fold -->
-    <div class="panel folded acted">
-      <div class="panel-header">
-        <span class="position-badge">BTN</span>
-        <span class="stack">200</span>
-      </div>
-      <div class="player-name">Player 5</div>
-      <div class="action-options">
-        <div class="action-option chosen fold">🔴 Fold</div>
-        <div class="action-option call">🟢 Call 6</div>
-        <div class="action-option raise">🟡 3-Bet</div>
-      </div>
-    </div>
-
-    <!-- SB — Fold (preflop continued) -->
-    <div class="panel folded acted">
-      <div class="panel-header">
-        <span class="position-badge">SB</span>
-        <span class="stack">199</span>
-      </div>
-      <div class="player-name">Player 1</div>
-      <div class="action-options">
-        <div class="action-option chosen fold">🔴 Fold</div>
-        <div class="action-option call">🟢 Call 5</div>
-        <div class="action-option raise">🟡 3-Bet</div>
-      </div>
-    </div>
-
-    <!-- BB — Call preflop -->
-    <div class="panel acted">
-      <div class="panel-header">
-        <span class="position-badge">BB</span>
-        <span class="stack">194</span>
-      </div>
-      <div class="player-name">Player 2</div>
-      <div class="action-options">
-        <div class="action-option fold">🔴 Fold</div>
-        <div class="action-option chosen call">🟢 Call 4</div>
-        <div class="action-option raise">🟡 3-Bet</div>
-      </div>
-    </div>
-
-    <!-- FLOP DEAL marker (inline in timeline) -->
-    <div class="panel" style="min-width:60px;max-width:60px;justify-content:center;align-items:center;background:rgba(37,99,235,0.1);border-color:var(--blue);">
-      <div style="font-size:20px;">🃏</div>
-      <div style="font-size:9px;font-weight:700;color:var(--blue);">FLOP</div>
-    </div>
-
-    <!-- BB — Check (flop) -->
-    <div class="panel acted">
-      <div class="panel-header">
-        <span class="position-badge">BB</span>
-        <span class="stack">194</span>
-      </div>
-      <div class="player-name">Player 2</div>
-      <div class="action-options">
-        <div class="action-option chosen check">✅ Check</div>
-        <div class="action-option bet">🟡 Bet</div>
-      </div>
-    </div>
-
-    <!-- CO (Hero) — Bet 8 (flop) -->
-    <div class="panel acted">
-      <div class="panel-header">
-        <span class="position-badge">CO</span>
-        <span class="stack">186</span>
-      </div>
-      <div class="player-name">Robert <span class="hero-badge">⭐ HERO</span></div>
-      <div class="action-options">
-        <div class="action-option check">✅ Check</div>
-        <div class="action-option chosen bet">🟡 Bet 8</div>
-      </div>
-    </div>
-
-    <!-- BB — Active (facing bet) -->
-    <div class="panel active">
-      <div class="panel-header">
-        <span class="position-badge">BB</span>
-        <span class="stack">194</span>
-      </div>
-      <div class="player-name">Player 2</div>
-      <div class="acting-badge">● ACTING</div>
-      <div class="action-options">
-        <div class="action-option available fold-btn" onclick="recordAction('fold')">🔴 Fold</div>
-        <div class="action-option available call-btn" onclick="recordAction('call')">🟢 Call 8</div>
-        <div class="action-option available raise-btn" onclick="toggleBetInput()">🟡 Raise</div>
-      </div>
-    </div>
-
-    <!-- Spacer for scroll -->
-    <div style="min-width: 40px; flex-shrink: 0;"></div>
-  </div>
-
-  <!-- Bottom Area -->
-  <div class="bottom-area">
-    <div class="current-pot">
-      <span class="pot-label">Current Pot</span>
-      <span class="pot-value">20 bb</span>
-    </div>
-
-    <div class="active-player-info">
-      <span class="pos-badge">BB</span>
-      <div class="info-text">
-        <div class="name">Player 2</div>
-        <div class="detail">Stack: 194 bb · To call: 8 bb</div>
-      </div>
-    </div>
-
-    <div class="action-buttons">
-      <button class="action-btn btn-fold" onclick="recordAction('fold')">✕ FOLD</button>
-      <button class="action-btn btn-call" onclick="recordAction('call')">CALL 8</button>
-      <button class="action-btn btn-raise" onclick="toggleBetInput()">RAISE</button>
-    </div>
-
-    <div class="bet-input-area" id="bet-input">
-      <div class="bet-row">
-        <label>Raise to:</label>
-        <input type="number" value="16" min="16" max="194">
-        <span class="unit">bb</span>
-      </div>
-      <div class="presets">
-        <button class="preset-btn">33%</button>
-        <button class="preset-btn">50%</button>
-        <button class="preset-btn">75%</button>
-        <button class="preset-btn">Pot</button>
-        <button class="preset-btn">All-in</button>
-      </div>
-    </div>
-
-    <button class="undo-btn">↶ Undo: CO bet 8 bb</button>
   </div>
 </div>
 
-<!-- ===== WHITEBOARD VIEW ===== -->
-<div class="whiteboard-view" id="whiteboard-view">
-  <div class="wb-street">
-    <div class="wb-street-header">
-      <span class="wb-street-name">Preflop</span>
-      <span class="wb-street-pot">Pot: 3 → 12 bb</span>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">SB</span><span class="wb-icon">📤</span>
-      <span class="wb-text">Post 1</span><span class="wb-stack">[199]</span><span class="wb-pot">3</span>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">BB</span><span class="wb-icon">📤</span>
-      <span class="wb-text">Post 2</span><span class="wb-stack">[198]</span><span class="wb-pot">3</span>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">UTG</span><span class="wb-icon">🔴</span>
-      <span class="wb-text">Fold</span><span class="wb-stack">[200]</span><span class="wb-pot">3</span>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">HJ</span><span class="wb-icon">🔴</span>
-      <span class="wb-text">Fold</span><span class="wb-stack">[200]</span><span class="wb-pot">3</span>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">CO</span><span class="wb-icon">🟡</span>
-      <span class="wb-text" style="color:var(--amber)">Raise 6</span><span class="wb-stack">[194]</span><span class="wb-pot">9</span>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">BTN</span><span class="wb-icon">🔴</span>
-      <span class="wb-text">Fold</span><span class="wb-stack">[200]</span><span class="wb-pot">9</span>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">SB</span><span class="wb-icon">🔴</span>
-      <span class="wb-text">Fold</span><span class="wb-stack">[199]</span><span class="wb-pot">9</span>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">BB</span><span class="wb-icon">🟢</span>
-      <span class="wb-text" style="color:var(--green)">Call 4</span><span class="wb-stack">[194]</span><span class="wb-pot">12</span>
-    </div>
+<!-- ===================================
+     TABLET MOCKUP
+     =================================== -->
+<div class="frame-label" id="tablet-label" style="display:none;">iPad Mini — 820 × 600</div>
+<div class="mockup-frame tablet-frame" id="tablet-mockup">
+
+  <div class="header">
+    <h1>🃏 Recording Hand</h1>
+    <button class="close-btn">✕</button>
   </div>
 
-  <div class="wb-street">
-    <div class="wb-street-header">
-      <span class="wb-street-name">Flop</span>
-      <span class="wb-street-pot">Pot: 12 → ? bb</span>
+  <div class="street-indicator">
+    <div class="street-dot complete"><span class="dot"></span><span class="label">PRE 3bb</span></div>
+    <span class="street-arrow">→</span>
+    <div class="street-dot active"><span class="dot"></span><span class="label">FLOP 12bb</span></div>
+    <span class="street-arrow">→</span>
+    <div class="street-dot"><span class="dot"></span><span class="label">TURN</span></div>
+    <span class="street-arrow">→</span>
+    <div class="street-dot"><span class="dot"></span><span class="label">RIVER</span></div>
+  </div>
+
+  <div class="community-cards">
+    <div class="card-slot dealt"><span class="rank">A</span><span class="suit suit-d">♦</span></div>
+    <div class="card-slot dealt"><span class="rank">7</span><span class="suit suit-c">♣</span></div>
+    <div class="card-slot dealt"><span class="rank">2</span><span class="suit suit-h">♥</span></div>
+    <div class="card-slot empty">?</div>
+    <div class="card-slot empty">?</div>
+  </div>
+
+  <div class="tablet-body">
+    <div class="timeline-container" id="tablet-timeline">
+
+      <!-- Setup -->
+      <div class="panel setup">
+        <div class="game-type">NLHE</div>
+        <div class="game-info">6 players · 1/2</div>
+        <button class="edit-btn">Edit</button>
+      </div>
+
+      <!-- SB post -->
+      <div class="panel">
+        <div class="panel-header"><span class="position-badge">SB</span><span class="stack">199</span></div>
+        <div class="player-name">Player 1</div>
+        <div class="action-options"><div class="action-option chosen post">📤 Post 1</div></div>
+      </div>
+
+      <!-- BB post -->
+      <div class="panel">
+        <div class="panel-header"><span class="position-badge">BB</span><span class="stack">198</span></div>
+        <div class="player-name">Player 2</div>
+        <div class="action-options"><div class="action-option chosen post">📤 Post 2</div></div>
+      </div>
+
+      <!-- Compressed folds -->
+      <div class="panel compressed">
+        <div class="compressed-label">2 folds</div>
+        <div class="compressed-row"><span class="c-pos">UTG</span><span class="c-action">Fold</span><span class="c-stack">[200]</span></div>
+        <div class="compressed-row"><span class="c-pos">HJ</span><span class="c-action">Fold</span><span class="c-stack">[200]</span></div>
+      </div>
+
+      <!-- CO hero raise -->
+      <div class="panel">
+        <div class="panel-header"><span class="position-badge">CO</span><span class="stack">194</span></div>
+        <div class="player-name">Robert <span class="hero-badge">⭐ HERO</span></div>
+        <div class="hole-cards">
+          <div class="hole-card"><span class="rank">A</span><span class="suit suit-s">♠</span></div>
+          <div class="hole-card"><span class="rank">K</span><span class="suit suit-h">♥</span></div>
+        </div>
+        <div class="action-options">
+          <div class="action-option fold">🔴 Fold</div>
+          <div class="action-option call">🟢 Call 2</div>
+          <div class="action-option chosen raise">🟡 Raise 6</div>
+        </div>
+      </div>
+
+      <!-- BTN + SB folds compressed -->
+      <div class="panel compressed">
+        <div class="compressed-label">2 folds</div>
+        <div class="compressed-row"><span class="c-pos">BTN</span><span class="c-action">Fold</span><span class="c-stack">[200]</span></div>
+        <div class="compressed-row"><span class="c-pos">SB</span><span class="c-action">Fold</span><span class="c-stack">[199]</span></div>
+      </div>
+
+      <!-- BB call -->
+      <div class="panel">
+        <div class="panel-header"><span class="position-badge">BB</span><span class="stack">194</span></div>
+        <div class="player-name">Player 2</div>
+        <div class="action-options">
+          <div class="action-option fold">🔴 Fold</div>
+          <div class="action-option chosen call">🟢 Call 4</div>
+          <div class="action-option raise">🟡 3-Bet</div>
+        </div>
+      </div>
+
+      <!-- Flop marker -->
+      <div class="panel street-marker">
+        <div class="sm-icon">🃏</div>
+        <div class="sm-label">FLOP</div>
+      </div>
+
+      <!-- BB check (flop) -->
+      <div class="panel">
+        <div class="panel-header"><span class="position-badge">BB</span><span class="stack">194</span></div>
+        <div class="player-name">Player 2</div>
+        <div class="action-options">
+          <div class="action-option chosen check">✅ Check</div>
+          <div class="action-option bet">🟡 Bet</div>
+        </div>
+      </div>
+
+      <!-- CO bet (flop) -->
+      <div class="panel">
+        <div class="panel-header"><span class="position-badge">CO</span><span class="stack">186</span></div>
+        <div class="player-name">Robert <span class="hero-badge">⭐</span></div>
+        <div class="action-options">
+          <div class="action-option check">✅ Check</div>
+          <div class="action-option chosen bet">🟡 Bet 8</div>
+        </div>
+      </div>
+
+      <!-- BB active -->
+      <div class="panel active">
+        <div class="panel-header"><span class="position-badge">BB</span><span class="stack">194</span></div>
+        <div class="player-name">Player 2</div>
+        <div class="acting-badge">● ACTING</div>
+        <div class="action-options">
+          <div class="action-option available fold-btn">🔴 Fold</div>
+          <div class="action-option available call-btn">🟢 Call 8</div>
+          <div class="action-option available raise-btn">🟡 Raise</div>
+        </div>
+      </div>
+
+      <div style="min-width:30px;flex-shrink:0;"></div>
     </div>
-    <div class="wb-board">
-      <div class="wb-card"><span class="rank">A</span><span class="suit suit-d">♦</span></div>
-      <div class="wb-card"><span class="rank">7</span><span class="suit suit-c">♣</span></div>
-      <div class="wb-card"><span class="rank">2</span><span class="suit suit-h">♥</span></div>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">BB</span><span class="wb-icon">✅</span>
-      <span class="wb-text">Check</span><span class="wb-stack">[194]</span><span class="wb-pot">12</span>
-    </div>
-    <div class="wb-action-row">
-      <span class="wb-pos">CO</span><span class="wb-icon">🟡</span>
-      <span class="wb-text" style="color:var(--amber)">Bet 8</span><span class="wb-stack">[186]</span><span class="wb-pot">20</span>
-    </div>
-    <div class="wb-action-row" style="opacity:0.5;font-style:italic;">
-      <span class="wb-pos">BB</span><span class="wb-icon">⏳</span>
-      <span class="wb-text" style="color:var(--text-muted)">Awaiting action...</span>
+
+    <div class="tablet-bottom">
+      <div class="tb-pot">Pot: 20 bb</div>
+      <div class="tb-active-info">
+        <span class="tb-pos-badge">BB</span>
+        <div class="tb-info">
+          <div class="name">Player 2</div>
+          <div class="detail">194 bb · To call: 8</div>
+        </div>
+      </div>
+      <div class="tb-actions">
+        <button class="tb-btn tb-btn-fold">✕ FOLD</button>
+        <button class="tb-btn tb-btn-call">CALL 8</button>
+        <button class="tb-btn tb-btn-raise">RAISE</button>
+      </div>
+      <button class="tb-undo">↶ Undo: CO bet 8</button>
     </div>
   </div>
 </div>
 
 <script>
-function showView(view) {
-  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-  if (view === 'recorder') {
-    document.getElementById('recorder-view').classList.remove('hidden');
-    document.getElementById('whiteboard-view').classList.remove('visible');
-    document.querySelectorAll('.view-tab')[0].classList.add('active');
+function showMockup(type) {
+  document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mockup-frame').forEach(f => f.classList.remove('visible'));
+  document.querySelectorAll('.frame-label').forEach(l => l.style.display = 'none');
+
+  if (type === 'mobile') {
+    document.getElementById('mobile-mockup').classList.add('visible');
+    document.getElementById('mobile-label').style.display = 'block';
+    document.querySelectorAll('.picker-btn')[0].classList.add('active');
   } else {
-    document.getElementById('recorder-view').classList.add('hidden');
-    document.getElementById('whiteboard-view').classList.add('visible');
-    document.querySelectorAll('.view-tab')[1].classList.add('active');
+    document.getElementById('tablet-mockup').classList.add('visible');
+    document.getElementById('tablet-label').style.display = 'block';
+    document.querySelectorAll('.picker-btn')[1].classList.add('active');
   }
 }
 
-function toggleBetInput() {
-  document.getElementById('bet-input').classList.toggle('visible');
-}
-
-function recordAction(type) {
-  // Simple demo — flash the active panel
-  const active = document.querySelector('.panel.active');
-  if (active) {
-    active.style.borderColor = type === 'fold' ? 'var(--red)' : type === 'call' ? 'var(--green)' : 'var(--amber)';
-    setTimeout(() => { active.style.borderColor = 'var(--green)'; }, 300);
-  }
-}
-
-// Auto-scroll timeline to the right on load
+// Auto-scroll tablet timeline to the right
 window.addEventListener('load', () => {
-  const timeline = document.getElementById('timeline');
-  timeline.scrollLeft = timeline.scrollWidth;
+  const tl = document.getElementById('tablet-timeline');
+  if (tl) tl.scrollLeft = tl.scrollWidth;
+
+  // Auto-scroll mobile feed to bottom
+  const feed = document.getElementById('mobile-feed');
+  if (feed) feed.scrollTop = feed.scrollHeight;
 });
 </script>
 
