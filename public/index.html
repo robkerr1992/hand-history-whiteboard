@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Hand History Whiteboard — Mockups</title>
+<title>Hand History Whiteboard — Mockup v3</title>
 <style>
   :root {
     --bg: #0f1117;
@@ -26,753 +26,610 @@
     padding: 20px;
   }
 
-  /* ===== PICKER ===== */
   .picker {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
+    display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
   }
   .picker-btn {
-    padding: 10px 20px;
-    border-radius: 10px;
-    border: 2px solid var(--border);
-    background: var(--bg-secondary);
-    color: var(--text-muted);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+    padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border);
+    background: var(--bg-secondary); color: var(--text-muted);
+    font-size: 14px; font-weight: 600; cursor: pointer;
   }
   .picker-btn.active { border-color: var(--amber); color: var(--amber); }
 
+  .frame-label { text-align: center; color: var(--text-muted); font-size: 12px; margin-bottom: 4px; }
+
   .mockup-frame {
-    display: none;
-    margin: 0 auto;
-    border-radius: 24px;
-    overflow: hidden;
-    border: 3px solid #333;
-    background: var(--bg);
-    position: relative;
+    display: none; margin: 0 auto; border-radius: 24px; overflow: hidden;
+    border: 3px solid #333; background: var(--bg); flex-direction: column;
   }
-  .mockup-frame.visible { display: flex; flex-direction: column; }
+  .mockup-frame.visible { display: flex; }
+  .phone-frame { width: 390px; height: 844px; }
+  .tablet-frame { width: 820px; height: 620px; }
 
-  /* Phone frame */
-  .phone-frame {
-    width: 390px;
-    height: 844px;
+  /* ===== HEADER ===== */
+  .hdr {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 16px; background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
   }
-  /* Tablet frame */
-  .tablet-frame {
-    width: 820px;
-    height: 600px;
-  }
-
-  .frame-label {
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 12px;
-    margin-top: 12px;
-    margin-bottom: 4px;
-  }
-
-  /* ===== SHARED STYLES ===== */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 16px;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .header h1 { font-size: 15px; font-weight: 600; }
-  .close-btn {
+  .hdr h1 { font-size: 15px; font-weight: 600; }
+  .hdr-right { display: flex; align-items: center; gap: 8px; }
+  .hdr-pot { font-size: 13px; font-weight: 700; color: var(--amber); }
+  .hdr-close {
     width: 30px; height: 30px; border-radius: 8px;
     background: var(--bg-tertiary); border: none;
     color: var(--text-muted); font-size: 16px; cursor: pointer;
   }
 
-  .street-indicator {
-    display: flex; align-items: center; gap: 6px;
-    padding: 7px 16px;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border);
-    font-size: 11px; flex-shrink: 0;
+  /* ===== SPLIT LAYOUT ===== */
+  .split {
+    display: flex; flex-direction: column; flex: 1; min-height: 0;
   }
-  .street-dot { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
-  .street-dot .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
-  .street-dot.active .dot { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
-  .street-dot.complete .dot { background: var(--green); }
-  .street-dot.active .label { color: var(--amber); font-weight: 600; }
-  .street-dot.complete .label { color: var(--text-muted); }
-  .street-dot .label { color: var(--text-muted); }
-  .street-arrow { color: var(--border); font-size: 10px; }
 
-  .community-cards {
-    display: flex; align-items: center; justify-content: center;
-    gap: 5px; padding: 8px 16px; background: var(--bg); flex-shrink: 0;
+  /* TOP HALF — Whiteboard */
+  .top-half {
+    flex: 1; overflow-y: auto; border-bottom: 2px solid var(--border);
+    -webkit-overflow-scrolling: touch; min-height: 0;
   }
-  .card-slot {
-    width: 40px; height: 54px; border-radius: 5px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; flex-shrink: 0;
+  .top-half::-webkit-scrollbar { display: none; }
+
+  /* BOTTOM HALF — Timeline + Actions */
+  .bottom-half {
+    flex: 1; display: flex; flex-direction: column; min-height: 0;
+    background: var(--bg-secondary);
   }
-  .card-slot.dealt { background: #fff; color: #111; flex-direction: column; line-height: 1; }
-  .card-slot.dealt .rank { font-size: 14px; font-weight: 800; }
-  .card-slot.dealt .suit { font-size: 16px; }
-  .card-slot.empty { border: 2px dashed var(--border); color: var(--text-muted); font-size: 14px; }
+
+  /* Resize handle */
+  .resize-handle {
+    height: 20px; display: flex; align-items: center; justify-content: center;
+    background: var(--bg-tertiary); cursor: ns-resize; flex-shrink: 0;
+  }
+  .resize-handle .grip {
+    width: 40px; height: 4px; border-radius: 2px; background: var(--border);
+  }
+
+  /* ===== WHITEBOARD (top) ===== */
+  .wb-street { border-bottom: 1px solid var(--border); }
+  .wb-street:last-child { border-bottom: none; }
+
+  .wb-street-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px; cursor: pointer;
+    background: var(--bg-secondary);
+    position: sticky; top: 0; z-index: 2;
+  }
+  .wb-street-header:active { background: var(--bg-tertiary); }
+  .wb-chevron {
+    font-size: 10px; color: var(--text-muted); transition: transform 0.2s;
+    width: 16px; text-align: center;
+  }
+  .wb-street.collapsed .wb-chevron { transform: rotate(-90deg); }
+  .wb-street-name {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .wb-street-name.active-street { color: var(--amber); }
+  .wb-street-name.complete-street { color: var(--text); }
+  .wb-street-name.future-street { color: var(--text-muted); opacity: 0.4; }
+  .wb-street-pot { font-size: 11px; color: var(--amber); font-weight: 600; margin-left: auto; }
+  .wb-street-board { display: flex; gap: 3px; margin-left: 8px; }
+  .wb-mini-card {
+    font-size: 10px; font-weight: 700; padding: 1px 3px;
+    border-radius: 2px; background: rgba(255,255,255,0.1);
+  }
+  .wb-action-count {
+    font-size: 10px; color: var(--text-muted); background: var(--bg-tertiary);
+    padding: 1px 6px; border-radius: 8px;
+  }
+
+  .wb-body {
+    overflow: hidden; transition: max-height 0.25s ease;
+    max-height: 500px;
+  }
+  .wb-street.collapsed .wb-body { max-height: 0; }
+
+  .wb-row {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 14px 5px 38px; font-size: 12px;
+  }
+  .wb-row:nth-child(even) { background: rgba(255,255,255,0.02); }
+  .wb-row .r-pos { width: 30px; font-weight: 600; color: var(--text-muted); font-size: 11px; }
+  .wb-row .r-icon { width: 16px; text-align: center; font-size: 11px; }
+  .wb-row .r-text { flex: 1; font-size: 12px; }
+  .wb-row .r-stack { font-size: 10px; color: var(--text-muted); }
+  .wb-row .r-pot { font-size: 10px; color: var(--amber); min-width: 24px; text-align: right; }
+  .fold-text { color: var(--red); }
+  .call-text { color: var(--green); }
+  .check-text { color: var(--green); }
+  .raise-text { color: var(--amber); }
+  .bet-text { color: var(--amber); }
+  .post-text { color: var(--text-muted); }
+  .allin-text { color: var(--purple); }
+
+  .wb-row.awaiting {
+    opacity: 0.5; font-style: italic; padding: 6px 14px 8px 38px;
+  }
+
+  /* ===== COMMUNITY CARDS BAR ===== */
+  .board-bar {
+    display: flex; align-items: center; justify-content: center;
+    gap: 5px; padding: 6px 12px; background: var(--bg);
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .b-card {
+    width: 36px; height: 48px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; flex-shrink: 0; flex-direction: column; line-height: 1;
+  }
+  .b-card.dealt { background: #fff; color: #111; }
+  .b-card.dealt .rank { font-size: 13px; font-weight: 800; }
+  .b-card.dealt .suit { font-size: 15px; }
+  .b-card.empty { border: 2px dashed var(--border); color: var(--text-muted); font-size: 13px; }
   .suit-s { color: #6b7280 !important; }
   .suit-h { color: #ef4444 !important; }
   .suit-d { color: #3b82f6 !important; }
   .suit-c { color: #22c55e !important; }
 
-  /* ===================================
-     MOBILE — Vertical Action Feed
-     =================================== */
-  .mobile-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-
-  .action-feed {
-    flex: 1; overflow-y: auto; padding: 8px 12px;
-    display: flex; flex-direction: column; gap: 3px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .action-feed::-webkit-scrollbar { display: none; }
-
-  /* Street divider in feed */
-  .feed-street-divider {
-    display: flex; align-items: center; gap: 8px;
-    padding: 6px 0; margin: 4px 0;
-  }
-  .feed-street-divider .line { flex: 1; height: 1px; background: var(--border); }
-  .feed-street-divider .street-label {
-    font-size: 10px; font-weight: 700; color: var(--blue);
-    text-transform: uppercase; letter-spacing: 1px;
-    padding: 2px 8px; background: rgba(37,99,235,0.1);
-    border-radius: 4px;
-  }
-
-  /* Action row in feed */
-  .feed-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 10px; border-radius: 8px;
-    background: var(--bg-secondary);
-    transition: all 0.15s;
-  }
-  .feed-row.hero { border-left: 3px solid var(--amber); }
-  .feed-row.folded { opacity: 0.45; }
-
-  .feed-pos {
-    font-size: 11px; font-weight: 700; width: 32px;
-    text-align: center; padding: 3px 0; border-radius: 4px;
-    background: var(--bg-tertiary); color: var(--text-muted); flex-shrink: 0;
-  }
-  .feed-action-icon { font-size: 12px; width: 18px; text-align: center; flex-shrink: 0; }
-  .feed-action-text { flex: 1; font-size: 13px; font-weight: 500; }
-  .feed-action-text.fold-text { color: var(--red); }
-  .feed-action-text.call-text { color: var(--green); }
-  .feed-action-text.check-text { color: var(--green); }
-  .feed-action-text.raise-text { color: var(--amber); }
-  .feed-action-text.bet-text { color: var(--amber); }
-  .feed-action-text.post-text { color: var(--text-muted); }
-  .feed-action-text.allin-text { color: var(--purple); }
-  .feed-stack { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
-  .feed-pot { font-size: 11px; color: var(--amber); flex-shrink: 0; min-width: 28px; text-align: right; }
-
-  /* Compressed fold group */
-  .feed-fold-group {
-    display: flex; align-items: center; gap: 6px;
-    padding: 5px 10px; border-radius: 8px;
-    background: var(--bg-secondary); opacity: 0.45;
-  }
-  .fold-group-positions {
-    display: flex; gap: 3px;
-  }
-  .fold-group-positions .mini-pos {
-    font-size: 9px; font-weight: 700; padding: 2px 5px;
-    border-radius: 3px; background: var(--bg-tertiary); color: var(--text-muted);
-  }
-  .fold-group-label { font-size: 11px; color: var(--red); flex: 1; }
-  .fold-group-expand {
-    font-size: 10px; color: var(--text-muted); cursor: pointer;
-    background: none; border: none; padding: 2px 4px;
-  }
-
-  /* Decision context (expandable) */
-  .feed-row .decision-context {
-    display: none;
-    padding: 6px 0 0;
-  }
-  .feed-row.expanded .decision-context { display: block; }
-  .decision-options {
-    display: flex; gap: 4px; flex-wrap: wrap;
-  }
-  .decision-opt {
-    font-size: 9px; padding: 2px 6px; border-radius: 4px;
-    background: var(--bg-tertiary); color: var(--text-muted);
-  }
-  .decision-opt.was-chosen { font-weight: 700; }
-  .decision-opt.was-chosen.fold-opt { background: rgba(220,38,38,0.15); color: var(--red); }
-  .decision-opt.was-chosen.call-opt { background: rgba(22,163,74,0.15); color: var(--green); }
-  .decision-opt.was-chosen.raise-opt { background: rgba(217,119,6,0.15); color: var(--amber); }
-
-  /* Mobile bottom */
-  .mobile-bottom {
-    flex-shrink: 0; background: var(--bg-secondary);
-    border-top: 1px solid var(--border); padding: 8px 14px 16px;
-  }
-  .pot-row {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
-  }
-  .pot-label { font-size: 11px; color: var(--text-muted); }
-  .pot-value { font-size: 16px; font-weight: 800; color: var(--amber); }
-
-  .active-info {
-    display: flex; align-items: center; gap: 8px;
-    padding: 7px 10px; background: var(--bg-tertiary);
-    border-radius: 8px; margin-bottom: 8px;
-  }
-  .active-info .pos-badge {
-    font-size: 11px; font-weight: 700; padding: 3px 7px;
-    border-radius: 4px; background: var(--green); color: #fff;
-  }
-  .active-info .name { font-size: 12px; font-weight: 600; }
-  .active-info .detail { font-size: 10px; color: var(--text-muted); }
-
-  .mobile-actions {
-    display: flex; gap: 6px;
-  }
-  .m-action-btn {
-    flex: 1; padding: 14px 6px; border-radius: 10px;
-    border: none; font-size: 14px; font-weight: 700;
-    cursor: pointer; color: #fff;
-  }
-  .m-action-btn:active { transform: scale(0.96); }
-  .m-btn-fold { background: #374151; color: #9ca3af; }
-  .m-btn-call { background: var(--green); }
-  .m-btn-raise { background: var(--blue); }
-
-  .mobile-bet-input {
-    display: none; margin-top: 8px; padding: 8px 10px;
-    background: var(--bg-tertiary); border-radius: 8px;
-  }
-  .mobile-bet-input.visible { display: block; }
-  .mbi-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-  .mbi-row label { font-size: 11px; color: var(--text-muted); }
-  .mbi-row input {
-    flex: 1; padding: 8px; border-radius: 6px;
-    border: 1px solid var(--border); background: var(--bg);
-    color: var(--text); font-size: 14px; font-weight: 600; text-align: right;
-  }
-  .mbi-row .unit { font-size: 11px; color: var(--text-muted); }
-  .mbi-presets { display: flex; gap: 4px; }
-  .mbi-preset {
-    flex: 1; padding: 7px 4px; border-radius: 6px;
-    border: 1px solid var(--border); background: var(--bg);
-    color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer;
-  }
-
-  .m-undo {
-    display: flex; align-items: center; gap: 6px; margin-top: 6px;
-    padding: 7px 10px; border-radius: 8px; background: transparent;
-    border: 1px solid var(--border); color: var(--text-muted);
-    font-size: 10px; cursor: pointer; width: 100%;
-  }
-
-  /* ===================================
-     TABLET — Horizontal Timeline
-     =================================== */
-  .tablet-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-
-  .timeline-container {
+  /* ===== TIMELINE (bottom) ===== */
+  .timeline-scroll {
     flex: 1; overflow-x: auto; overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    padding: 10px 0 10px 10px;
-    display: flex; align-items: stretch; gap: 7px;
+    display: flex; align-items: stretch; gap: 6px;
+    padding: 8px 8px 8px 8px;
     scroll-behavior: smooth; min-height: 0;
   }
-  .timeline-container::-webkit-scrollbar { display: none; }
+  .timeline-scroll::-webkit-scrollbar { display: none; }
 
-  .panel {
-    min-width: 130px; max-width: 130px;
-    background: var(--bg-secondary); border-radius: 10px;
-    border: 2px solid var(--border); padding: 8px;
-    display: flex; flex-direction: column; gap: 4px;
+  .pnl {
+    min-width: 110px; max-width: 110px;
+    background: var(--bg-tertiary); border-radius: 10px;
+    border: 2px solid var(--border); padding: 7px;
+    display: flex; flex-direction: column; gap: 3px;
     flex-shrink: 0; transition: all 0.2s; position: relative;
   }
-  .panel.setup {
-    min-width: 90px; max-width: 90px; background: var(--bg-tertiary);
+  .pnl.setup-pnl {
+    min-width: 80px; max-width: 80px;
     justify-content: center; align-items: center; text-align: center;
   }
-  .panel.setup .game-type { font-size: 13px; font-weight: 700; }
-  .panel.setup .game-info { font-size: 10px; color: var(--text-muted); }
-  .panel.setup .edit-btn {
-    margin-top: 3px; padding: 3px 8px; border-radius: 5px;
+  .pnl.setup-pnl .g-type { font-size: 12px; font-weight: 700; }
+  .pnl.setup-pnl .g-info { font-size: 9px; color: var(--text-muted); }
+  .pnl.setup-pnl .g-edit {
+    margin-top: 2px; padding: 2px 6px; border-radius: 4px;
     background: var(--bg-secondary); border: 1px solid var(--border);
-    color: var(--text-muted); font-size: 9px; cursor: pointer;
+    color: var(--text-muted); font-size: 8px; cursor: pointer;
   }
-  .panel.active {
-    min-width: 160px; max-width: 160px;
-    border-color: var(--green); box-shadow: 0 0 12px rgba(22,163,74,0.25);
-  }
-  .panel.folded { opacity: 0.45; }
 
-  .panel.compressed {
-    min-width: 80px; max-width: 80px; padding: 6px; gap: 1px;
+  .pnl.active-pnl {
+    min-width: 140px; max-width: 140px;
+    border-color: var(--green); box-shadow: 0 0 10px rgba(22,163,74,0.25);
   }
-  .compressed-label { font-size: 9px; color: var(--text-muted); font-weight: 600; margin-bottom: 1px; }
-  .compressed-row {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 9px; padding: 2px 0; border-bottom: 1px solid var(--border);
-  }
-  .compressed-row:last-child { border-bottom: none; }
-  .compressed-row .c-pos { font-weight: 600; color: var(--text-muted); }
-  .compressed-row .c-action { color: var(--red); font-size: 8px; }
-  .compressed-row .c-stack { color: var(--text-muted); font-size: 8px; }
+  .pnl.folded-pnl { opacity: 0.4; }
 
-  .panel-header { display: flex; justify-content: space-between; align-items: center; }
-  .position-badge {
-    font-size: 10px; font-weight: 700; padding: 2px 5px;
-    border-radius: 3px; background: var(--bg-tertiary);
+  .pnl.compressed-pnl {
+    min-width: 68px; max-width: 68px; padding: 5px; gap: 1px;
   }
-  .stack { font-size: 10px; color: var(--text-muted); }
-  .player-name { font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .hero-badge { font-size: 8px; color: var(--amber); font-weight: 600; }
-  .acting-badge {
-    font-size: 8px; font-weight: 700; color: var(--green);
+  .cp-label { font-size: 8px; color: var(--text-muted); font-weight: 600; }
+  .cp-row {
+    display: flex; justify-content: space-between; font-size: 8px;
+    padding: 1px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .cp-row:last-child { border-bottom: none; }
+  .cp-pos { font-weight: 600; color: var(--text-muted); }
+  .cp-act { color: var(--red); }
+
+  .pnl-hdr { display: flex; justify-content: space-between; align-items: center; }
+  .p-badge {
+    font-size: 9px; font-weight: 700; padding: 2px 5px;
+    border-radius: 3px; background: var(--bg-secondary);
+  }
+  .p-stack { font-size: 9px; color: var(--text-muted); }
+  .p-name { font-size: 9px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .p-hero { font-size: 7px; color: var(--amber); font-weight: 600; }
+  .p-acting {
+    font-size: 7px; font-weight: 700; color: var(--green);
     letter-spacing: 0.5px; text-transform: uppercase;
     animation: pulse 1.5s ease-in-out infinite;
   }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
 
-  .hole-cards { display: flex; gap: 2px; margin: 1px 0; }
-  .hole-card {
-    width: 22px; height: 30px; border-radius: 3px; background: #fff;
+  .p-holes { display: flex; gap: 2px; margin: 1px 0; }
+  .p-hole {
+    width: 20px; height: 26px; border-radius: 2px; background: #fff;
     display: flex; flex-direction: column; align-items: center;
-    justify-content: center; font-size: 7px; font-weight: 700; line-height: 1;
+    justify-content: center; line-height: 1;
   }
-  .hole-card .rank { font-size: 9px; }
-  .hole-card .suit { font-size: 10px; }
+  .p-hole .rank { font-size: 8px; font-weight: 800; color: #111; }
+  .p-hole .suit { font-size: 9px; }
 
-  .action-options { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
-  .action-option {
+  .p-opts { display: flex; flex-direction: column; gap: 2px; margin-top: 1px; }
+  .p-opt {
     display: flex; align-items: center; gap: 3px;
-    padding: 3px 5px; border-radius: 4px;
-    font-size: 9px; font-weight: 500; background: transparent;
-    color: var(--text-muted); opacity: 0.35;
+    padding: 2px 4px; border-radius: 3px;
+    font-size: 8px; font-weight: 500; color: var(--text-muted); opacity: 0.3;
   }
-  .action-option.chosen { opacity: 1; font-weight: 700; }
-  .action-option.chosen.fold { background: rgba(220,38,38,0.15); color: var(--red); }
-  .action-option.chosen.call { background: rgba(22,163,74,0.15); color: var(--green); }
-  .action-option.chosen.check { background: rgba(22,163,74,0.15); color: var(--green); }
-  .action-option.chosen.raise { background: rgba(217,119,6,0.15); color: var(--amber); }
-  .action-option.chosen.bet { background: rgba(217,119,6,0.15); color: var(--amber); }
-  .action-option.chosen.post { background: rgba(107,114,128,0.1); color: var(--text-muted); opacity: 0.7; }
-  .action-option.available {
-    opacity: 1; cursor: pointer; background: var(--bg-tertiary);
+  .p-opt.chosen { opacity: 1; font-weight: 700; }
+  .p-opt.chosen.o-fold { background: rgba(220,38,38,0.15); color: var(--red); }
+  .p-opt.chosen.o-call { background: rgba(22,163,74,0.15); color: var(--green); }
+  .p-opt.chosen.o-check { background: rgba(22,163,74,0.15); color: var(--green); }
+  .p-opt.chosen.o-raise { background: rgba(217,119,6,0.15); color: var(--amber); }
+  .p-opt.chosen.o-bet { background: rgba(217,119,6,0.15); color: var(--amber); }
+  .p-opt.chosen.o-post { background: rgba(107,114,128,0.1); color: var(--text-muted); opacity: 0.7; }
+  .p-opt.avail {
+    opacity: 1; cursor: pointer; background: var(--bg-secondary);
     border: 1px solid var(--border); color: var(--text);
   }
-  .action-option.available:active { transform: scale(0.95); }
-  .action-option.available.fold-btn { border-color: var(--red); color: var(--red); }
-  .action-option.available.call-btn { border-color: var(--green); color: var(--green); }
-  .action-option.available.raise-btn { border-color: var(--amber); color: var(--amber); }
+  .p-opt.avail:active { transform: scale(0.95); }
+  .p-opt.avail.a-fold { border-color: var(--red); color: var(--red); }
+  .p-opt.avail.a-call { border-color: var(--green); color: var(--green); }
+  .p-opt.avail.a-raise { border-color: var(--amber); color: var(--amber); }
 
-  .panel.street-marker {
-    min-width: 52px; max-width: 52px;
+  .pnl.street-mk {
+    min-width: 44px; max-width: 44px;
     justify-content: center; align-items: center;
-    background: rgba(37,99,235,0.08); border-color: var(--blue);
+    background: rgba(37,99,235,0.06); border-color: rgba(37,99,235,0.3);
   }
-  .street-marker .sm-icon { font-size: 18px; }
-  .street-marker .sm-label { font-size: 9px; font-weight: 700; color: var(--blue); }
+  .street-mk .sm-icon { font-size: 16px; }
+  .street-mk .sm-label { font-size: 8px; font-weight: 700; color: var(--blue); }
 
-  /* Tablet bottom */
-  .tablet-bottom {
-    flex-shrink: 0; background: var(--bg-secondary);
-    border-top: 1px solid var(--border);
-    padding: 8px 16px 12px;
-    display: flex; align-items: center; gap: 16px;
+  /* ===== BOTTOM ACTIONS ===== */
+  .bottom-actions {
+    flex-shrink: 0; padding: 6px 12px 14px;
+    background: var(--bg-secondary); border-top: 1px solid var(--border);
   }
-  .tb-pot { font-size: 14px; font-weight: 800; color: var(--amber); white-space: nowrap; }
-  .tb-active-info {
-    display: flex; align-items: center; gap: 6px; flex: 1;
+  .ba-active {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 6px;
   }
-  .tb-pos-badge {
-    font-size: 11px; font-weight: 700; padding: 3px 7px;
+  .ba-pos {
+    font-size: 10px; font-weight: 700; padding: 3px 6px;
     border-radius: 4px; background: var(--green); color: #fff;
   }
-  .tb-info .name { font-size: 12px; font-weight: 600; }
-  .tb-info .detail { font-size: 10px; color: var(--text-muted); }
-  .tb-actions { display: flex; gap: 5px; }
-  .tb-btn {
-    padding: 10px 16px; border-radius: 8px; border: none;
+  .ba-name { font-size: 11px; font-weight: 600; }
+  .ba-detail { font-size: 10px; color: var(--text-muted); }
+  .ba-btns { display: flex; gap: 5px; }
+  .ba-btn {
+    flex: 1; padding: 12px 6px; border-radius: 10px; border: none;
     font-size: 13px; font-weight: 700; cursor: pointer; color: #fff;
   }
-  .tb-btn:active { transform: scale(0.96); }
-  .tb-btn-fold { background: #374151; color: #9ca3af; }
-  .tb-btn-call { background: var(--green); }
-  .tb-btn-raise { background: var(--blue); }
-  .tb-undo {
-    padding: 8px 12px; border-radius: 8px; background: transparent;
+  .ba-btn:active { transform: scale(0.96); }
+  .ba-fold { background: #374151; color: #9ca3af; }
+  .ba-call { background: var(--green); }
+  .ba-raise { background: var(--blue); }
+
+  .ba-bet-area {
+    display: none; margin-top: 6px; padding: 8px;
+    background: var(--bg-tertiary); border-radius: 8px;
+  }
+  .ba-bet-area.visible { display: block; }
+  .ba-bet-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+  .ba-bet-row label { font-size: 10px; color: var(--text-muted); }
+  .ba-bet-row input {
+    flex: 1; padding: 7px; border-radius: 5px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--text); font-size: 13px; font-weight: 600; text-align: right;
+  }
+  .ba-bet-row .unit { font-size: 10px; color: var(--text-muted); }
+  .ba-presets { display: flex; gap: 3px; }
+  .ba-preset {
+    flex: 1; padding: 6px 3px; border-radius: 5px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--text-muted); font-size: 10px;
+    font-weight: 600; cursor: pointer;
+  }
+
+  .ba-undo {
+    display: flex; align-items: center; gap: 4px; margin-top: 5px;
+    padding: 6px 10px; border-radius: 6px; background: transparent;
     border: 1px solid var(--border); color: var(--text-muted);
-    font-size: 10px; cursor: pointer; white-space: nowrap;
+    font-size: 10px; cursor: pointer; width: 100%;
   }
 </style>
 </head>
 <body>
 
-<!-- View Picker -->
 <div class="picker">
   <button class="picker-btn active" onclick="showMockup('mobile')">📱 Mobile (390px)</button>
   <button class="picker-btn" onclick="showMockup('tablet')">📟 Tablet (820px)</button>
 </div>
 
 <!-- ===================================
-     MOBILE MOCKUP
+     MOBILE
      =================================== -->
-<div class="frame-label" id="mobile-label">iPhone 15 — 390 × 844</div>
+<div class="frame-label" id="mobile-label">iPhone 15 — 390 × 844 · Top: Whiteboard · Bottom: Timeline</div>
 <div class="mockup-frame phone-frame visible" id="mobile-mockup">
 
-  <div class="header">
+  <div class="hdr">
     <h1>🃏 Recording Hand</h1>
-    <button class="close-btn">✕</button>
+    <div class="hdr-right">
+      <span class="hdr-pot">Pot: 20 bb</span>
+      <button class="hdr-close">✕</button>
+    </div>
   </div>
 
-  <div class="street-indicator">
-    <div class="street-dot complete"><span class="dot"></span><span class="label">PRE 3bb</span></div>
-    <span class="street-arrow">→</span>
-    <div class="street-dot active"><span class="dot"></span><span class="label">FLOP 12bb</span></div>
-    <span class="street-arrow">→</span>
-    <div class="street-dot"><span class="dot"></span><span class="label">TURN</span></div>
-    <span class="street-arrow">→</span>
-    <div class="street-dot"><span class="dot"></span><span class="label">RIVER</span></div>
-  </div>
+  <div class="split">
+    <!-- ===== TOP HALF: Whiteboard ===== -->
+    <div class="top-half">
 
-  <div class="community-cards">
-    <div class="card-slot dealt"><span class="rank">A</span><span class="suit suit-d">♦</span></div>
-    <div class="card-slot dealt"><span class="rank">7</span><span class="suit suit-c">♣</span></div>
-    <div class="card-slot dealt"><span class="rank">2</span><span class="suit suit-h">♥</span></div>
-    <div class="card-slot empty">?</div>
-    <div class="card-slot empty">?</div>
-  </div>
-
-  <div class="mobile-body">
-    <!-- Action Feed -->
-    <div class="action-feed" id="mobile-feed">
-
-      <div class="feed-street-divider">
-        <div class="line"></div>
-        <span class="street-label">Preflop · 3bb</span>
-        <div class="line"></div>
-      </div>
-
-      <!-- Blinds -->
-      <div class="feed-row">
-        <span class="feed-pos">SB</span>
-        <span class="feed-action-icon">📤</span>
-        <span class="feed-action-text post-text">Post 1</span>
-        <span class="feed-stack">199</span>
-        <span class="feed-pot">3</span>
-      </div>
-      <div class="feed-row">
-        <span class="feed-pos">BB</span>
-        <span class="feed-action-icon">📤</span>
-        <span class="feed-action-text post-text">Post 2</span>
-        <span class="feed-stack">198</span>
-        <span class="feed-pot">3</span>
-      </div>
-
-      <!-- Compressed folds -->
-      <div class="feed-fold-group" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'flex' : 'none'; this.style.display = 'none';">
-        <span class="feed-action-icon">🔴</span>
-        <div class="fold-group-positions">
-          <span class="mini-pos">UTG</span>
-          <span class="mini-pos">HJ</span>
+      <!-- PREFLOP — collapsed -->
+      <div class="wb-street collapsed" onclick="this.classList.toggle('collapsed')">
+        <div class="wb-street-header">
+          <span class="wb-chevron">▼</span>
+          <span class="wb-street-name complete-street">Preflop</span>
+          <span class="wb-action-count">6</span>
+          <span class="wb-street-pot">3 → 12 bb</span>
         </div>
-        <span class="fold-group-label">fold</span>
-        <button class="fold-group-expand">▼</button>
-      </div>
-      <!-- Expanded (hidden by default) -->
-      <div style="display:none; flex-direction:column; gap:3px;">
-        <div class="feed-row folded">
-          <span class="feed-pos">UTG</span><span class="feed-action-icon">🔴</span>
-          <span class="feed-action-text fold-text">Fold</span>
-          <span class="feed-stack">200</span><span class="feed-pot">3</span>
-        </div>
-        <div class="feed-row folded">
-          <span class="feed-pos">HJ</span><span class="feed-action-icon">🔴</span>
-          <span class="feed-action-text fold-text">Fold</span>
-          <span class="feed-stack">200</span><span class="feed-pot">3</span>
+        <div class="wb-body">
+          <div class="wb-row"><span class="r-pos">SB</span><span class="r-icon">📤</span><span class="r-text post-text">Post 1</span><span class="r-stack">199</span><span class="r-pot">3</span></div>
+          <div class="wb-row"><span class="r-pos">BB</span><span class="r-icon">📤</span><span class="r-text post-text">Post 2</span><span class="r-stack">198</span><span class="r-pot">3</span></div>
+          <div class="wb-row"><span class="r-pos">UTG</span><span class="r-icon">🔴</span><span class="r-text fold-text">Fold</span><span class="r-stack">200</span><span class="r-pot">3</span></div>
+          <div class="wb-row"><span class="r-pos">HJ</span><span class="r-icon">🔴</span><span class="r-text fold-text">Fold</span><span class="r-stack">200</span><span class="r-pot">3</span></div>
+          <div class="wb-row"><span class="r-pos">CO</span><span class="r-icon">🟡</span><span class="r-text raise-text">Raise 6 ⭐</span><span class="r-stack">194</span><span class="r-pot">9</span></div>
+          <div class="wb-row"><span class="r-pos">BTN</span><span class="r-icon">🔴</span><span class="r-text fold-text">Fold</span><span class="r-stack">200</span><span class="r-pot">9</span></div>
+          <div class="wb-row"><span class="r-pos">SB</span><span class="r-icon">🔴</span><span class="r-text fold-text">Fold</span><span class="r-stack">199</span><span class="r-pot">9</span></div>
+          <div class="wb-row"><span class="r-pos">BB</span><span class="r-icon">🟢</span><span class="r-text call-text">Call 4</span><span class="r-stack">194</span><span class="r-pot">12</span></div>
         </div>
       </div>
 
-      <!-- CO Hero raise -->
-      <div class="feed-row hero" onclick="this.classList.toggle('expanded')" style="flex-wrap:wrap;">
-        <span class="feed-pos">CO</span>
-        <span class="feed-action-icon">🟡</span>
-        <span class="feed-action-text raise-text">Raise 6 ⭐</span>
-        <span class="feed-stack">194</span>
-        <span class="feed-pot">9</span>
-        <div class="decision-context" style="width:100%;padding-left:40px;">
-          <div class="decision-options">
-            <span class="decision-opt">🔴 Fold</span>
-            <span class="decision-opt">🟢 Call 2</span>
-            <span class="decision-opt was-chosen raise-opt">🟡 Raise 6 ✓</span>
+      <!-- FLOP — expanded (current) -->
+      <div class="wb-street" onclick="this.classList.toggle('collapsed')">
+        <div class="wb-street-header">
+          <span class="wb-chevron">▼</span>
+          <span class="wb-street-name active-street">Flop</span>
+          <div class="wb-street-board">
+            <span class="wb-mini-card"><span class="suit-d">A♦</span></span>
+            <span class="wb-mini-card"><span class="suit-c">7♣</span></span>
+            <span class="wb-mini-card"><span class="suit-h">2♥</span></span>
           </div>
+          <span class="wb-street-pot">12 bb</span>
+        </div>
+        <div class="wb-body">
+          <div class="wb-row"><span class="r-pos">BB</span><span class="r-icon">✅</span><span class="r-text check-text">Check</span><span class="r-stack">194</span><span class="r-pot">12</span></div>
+          <div class="wb-row"><span class="r-pos">CO</span><span class="r-icon">🟡</span><span class="r-text bet-text">Bet 8 ⭐</span><span class="r-stack">186</span><span class="r-pot">20</span></div>
+          <div class="wb-row awaiting"><span class="r-pos">BB</span><span class="r-icon">⏳</span><span class="r-text">Awaiting action...</span></div>
         </div>
       </div>
 
-      <!-- BTN + SB folds -->
-      <div class="feed-fold-group">
-        <span class="feed-action-icon">🔴</span>
-        <div class="fold-group-positions">
-          <span class="mini-pos">BTN</span>
-          <span class="mini-pos">SB</span>
+      <!-- TURN — future -->
+      <div class="wb-street collapsed">
+        <div class="wb-street-header">
+          <span class="wb-chevron">▼</span>
+          <span class="wb-street-name future-street">Turn</span>
         </div>
-        <span class="fold-group-label">fold</span>
-        <button class="fold-group-expand">▼</button>
+        <div class="wb-body"></div>
       </div>
 
-      <!-- BB call -->
-      <div class="feed-row" onclick="this.classList.toggle('expanded')" style="flex-wrap:wrap;">
-        <span class="feed-pos">BB</span>
-        <span class="feed-action-icon">🟢</span>
-        <span class="feed-action-text call-text">Call 4</span>
-        <span class="feed-stack">194</span>
-        <span class="feed-pot">12</span>
-        <div class="decision-context" style="width:100%;padding-left:40px;">
-          <div class="decision-options">
-            <span class="decision-opt">🔴 Fold</span>
-            <span class="decision-opt was-chosen call-opt">🟢 Call 4 ✓</span>
-            <span class="decision-opt">🟡 3-Bet</span>
-          </div>
+      <!-- RIVER — future -->
+      <div class="wb-street collapsed">
+        <div class="wb-street-header">
+          <span class="wb-chevron">▼</span>
+          <span class="wb-street-name future-street">River</span>
         </div>
+        <div class="wb-body"></div>
       </div>
 
-      <!-- Flop divider -->
-      <div class="feed-street-divider">
-        <div class="line"></div>
-        <span class="street-label">Flop · A♦ 7♣ 2♥ · 12bb</span>
-        <div class="line"></div>
-      </div>
-
-      <!-- BB check -->
-      <div class="feed-row">
-        <span class="feed-pos">BB</span>
-        <span class="feed-action-icon">✅</span>
-        <span class="feed-action-text check-text">Check</span>
-        <span class="feed-stack">194</span>
-        <span class="feed-pot">12</span>
-      </div>
-
-      <!-- CO hero bet -->
-      <div class="feed-row hero" onclick="this.classList.toggle('expanded')" style="flex-wrap:wrap;">
-        <span class="feed-pos">CO</span>
-        <span class="feed-action-icon">🟡</span>
-        <span class="feed-action-text bet-text">Bet 8 ⭐</span>
-        <span class="feed-stack">186</span>
-        <span class="feed-pot">20</span>
-        <div class="decision-context" style="width:100%;padding-left:40px;">
-          <div class="decision-options">
-            <span class="decision-opt">✅ Check</span>
-            <span class="decision-opt was-chosen raise-opt">🟡 Bet 8 ✓</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom spacing -->
-      <div style="height: 8px;"></div>
     </div>
 
-    <!-- Mobile Bottom -->
-    <div class="mobile-bottom">
-      <div class="pot-row">
-        <span class="pot-label">Pot</span>
-        <span class="pot-value">20 bb</span>
+    <!-- Resize handle -->
+    <div class="resize-handle"><div class="grip"></div></div>
+
+    <!-- ===== BOTTOM HALF: Timeline + Actions ===== -->
+    <div class="bottom-half">
+
+      <!-- Board cards bar -->
+      <div class="board-bar">
+        <div class="b-card dealt"><span class="rank">A</span><span class="suit suit-d">♦</span></div>
+        <div class="b-card dealt"><span class="rank">7</span><span class="suit suit-c">♣</span></div>
+        <div class="b-card dealt"><span class="rank">2</span><span class="suit suit-h">♥</span></div>
+        <div class="b-card empty">?</div>
+        <div class="b-card empty">?</div>
       </div>
 
-      <div class="active-info">
-        <span class="pos-badge">BB</span>
-        <div>
-          <div class="name">Player 2</div>
-          <div class="detail">Stack: 194 bb · To call: 8 bb</div>
+      <!-- Horizontal scroll timeline -->
+      <div class="timeline-scroll" id="mobile-tl">
+        <div class="pnl setup-pnl">
+          <div class="g-type">NLHE</div>
+          <div class="g-info">6p · 1/2</div>
+          <button class="g-edit">Edit</button>
         </div>
-      </div>
 
-      <div class="mobile-actions">
-        <button class="m-action-btn m-btn-fold">✕ FOLD</button>
-        <button class="m-action-btn m-btn-call">CALL 8</button>
-        <button class="m-action-btn m-btn-raise" onclick="document.getElementById('m-bet').classList.toggle('visible')">RAISE</button>
-      </div>
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">SB</span><span class="p-stack">199</span></div><div class="p-name">Player 1</div><div class="p-opts"><div class="p-opt chosen o-post">📤 Post 1</div></div></div>
 
-      <div class="mobile-bet-input" id="m-bet">
-        <div class="mbi-row">
-          <label>Raise to:</label>
-          <input type="number" value="16" min="16" max="194">
-          <span class="unit">bb</span>
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">BB</span><span class="p-stack">198</span></div><div class="p-name">Player 2</div><div class="p-opts"><div class="p-opt chosen o-post">📤 Post 2</div></div></div>
+
+        <div class="pnl compressed-pnl">
+          <div class="cp-label">2 folds</div>
+          <div class="cp-row"><span class="cp-pos">UTG</span><span class="cp-act">Fold</span></div>
+          <div class="cp-row"><span class="cp-pos">HJ</span><span class="cp-act">Fold</span></div>
         </div>
-        <div class="mbi-presets">
-          <button class="mbi-preset">33%</button>
-          <button class="mbi-preset">50%</button>
-          <button class="mbi-preset">75%</button>
-          <button class="mbi-preset">Pot</button>
-          <button class="mbi-preset">All-in</button>
+
+        <div class="pnl">
+          <div class="pnl-hdr"><span class="p-badge">CO</span><span class="p-stack">194</span></div>
+          <div class="p-name">Robert <span class="p-hero">⭐</span></div>
+          <div class="p-holes">
+            <div class="p-hole"><span class="rank">A</span><span class="suit suit-s">♠</span></div>
+            <div class="p-hole"><span class="rank">K</span><span class="suit suit-h">♥</span></div>
+          </div>
+          <div class="p-opts">
+            <div class="p-opt o-fold">🔴 Fold</div>
+            <div class="p-opt o-call">🟢 Call 2</div>
+            <div class="p-opt chosen o-raise">🟡 Raise 6</div>
+          </div>
         </div>
+
+        <div class="pnl compressed-pnl">
+          <div class="cp-label">2 folds</div>
+          <div class="cp-row"><span class="cp-pos">BTN</span><span class="cp-act">Fold</span></div>
+          <div class="cp-row"><span class="cp-pos">SB</span><span class="cp-act">Fold</span></div>
+        </div>
+
+        <div class="pnl">
+          <div class="pnl-hdr"><span class="p-badge">BB</span><span class="p-stack">194</span></div>
+          <div class="p-name">Player 2</div>
+          <div class="p-opts">
+            <div class="p-opt o-fold">🔴 Fold</div>
+            <div class="p-opt chosen o-call">🟢 Call 4</div>
+            <div class="p-opt o-raise">🟡 3-Bet</div>
+          </div>
+        </div>
+
+        <div class="pnl street-mk"><div class="sm-icon">🃏</div><div class="sm-label">FLOP</div></div>
+
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">BB</span><span class="p-stack">194</span></div><div class="p-name">Player 2</div><div class="p-opts"><div class="p-opt chosen o-check">✅ Check</div><div class="p-opt o-bet">🟡 Bet</div></div></div>
+
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">CO</span><span class="p-stack">186</span></div><div class="p-name">Robert <span class="p-hero">⭐</span></div><div class="p-opts"><div class="p-opt o-check">✅ Check</div><div class="p-opt chosen o-bet">🟡 Bet 8</div></div></div>
+
+        <div class="pnl active-pnl">
+          <div class="pnl-hdr"><span class="p-badge">BB</span><span class="p-stack">194</span></div>
+          <div class="p-name">Player 2</div>
+          <div class="p-acting">● ACTING</div>
+          <div class="p-opts">
+            <div class="p-opt avail a-fold">🔴 Fold</div>
+            <div class="p-opt avail a-call">🟢 Call 8</div>
+            <div class="p-opt avail a-raise">🟡 Raise</div>
+          </div>
+        </div>
+
+        <div style="min-width:20px;flex-shrink:0;"></div>
       </div>
 
-      <button class="m-undo">↶ Undo: CO bet 8 bb</button>
+      <!-- Action buttons -->
+      <div class="bottom-actions">
+        <div class="ba-active">
+          <span class="ba-pos">BB</span>
+          <div>
+            <span class="ba-name">Player 2</span>
+            <span class="ba-detail"> · 194 bb · Call 8</span>
+          </div>
+        </div>
+        <div class="ba-btns">
+          <button class="ba-btn ba-fold">✕ FOLD</button>
+          <button class="ba-btn ba-call">CALL 8</button>
+          <button class="ba-btn ba-raise" onclick="this.closest('.bottom-actions').querySelector('.ba-bet-area').classList.toggle('visible')">RAISE</button>
+        </div>
+        <div class="ba-bet-area">
+          <div class="ba-bet-row">
+            <label>Raise to:</label>
+            <input type="number" value="16" min="16" max="194">
+            <span class="unit">bb</span>
+          </div>
+          <div class="ba-presets">
+            <button class="ba-preset">33%</button>
+            <button class="ba-preset">50%</button>
+            <button class="ba-preset">75%</button>
+            <button class="ba-preset">Pot</button>
+            <button class="ba-preset">All-in</button>
+          </div>
+        </div>
+        <button class="ba-undo">↶ Undo: CO bet 8 bb</button>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- ===================================
-     TABLET MOCKUP
+     TABLET
      =================================== -->
-<div class="frame-label" id="tablet-label" style="display:none;">iPad Mini — 820 × 600</div>
+<div class="frame-label" id="tablet-label" style="display:none;">iPad Mini — 820 × 620 · Top: Whiteboard · Bottom: Timeline</div>
 <div class="mockup-frame tablet-frame" id="tablet-mockup">
 
-  <div class="header">
+  <div class="hdr">
     <h1>🃏 Recording Hand</h1>
-    <button class="close-btn">✕</button>
+    <div class="hdr-right">
+      <span class="hdr-pot">Pot: 20 bb</span>
+      <button class="hdr-close">✕</button>
+    </div>
   </div>
 
-  <div class="street-indicator">
-    <div class="street-dot complete"><span class="dot"></span><span class="label">PRE 3bb</span></div>
-    <span class="street-arrow">→</span>
-    <div class="street-dot active"><span class="dot"></span><span class="label">FLOP 12bb</span></div>
-    <span class="street-arrow">→</span>
-    <div class="street-dot"><span class="dot"></span><span class="label">TURN</span></div>
-    <span class="street-arrow">→</span>
-    <div class="street-dot"><span class="dot"></span><span class="label">RIVER</span></div>
-  </div>
+  <div class="split">
+    <!-- TOP: Whiteboard (wider, shows more) -->
+    <div class="top-half">
 
-  <div class="community-cards">
-    <div class="card-slot dealt"><span class="rank">A</span><span class="suit suit-d">♦</span></div>
-    <div class="card-slot dealt"><span class="rank">7</span><span class="suit suit-c">♣</span></div>
-    <div class="card-slot dealt"><span class="rank">2</span><span class="suit suit-h">♥</span></div>
-    <div class="card-slot empty">?</div>
-    <div class="card-slot empty">?</div>
-  </div>
-
-  <div class="tablet-body">
-    <div class="timeline-container" id="tablet-timeline">
-
-      <!-- Setup -->
-      <div class="panel setup">
-        <div class="game-type">NLHE</div>
-        <div class="game-info">6 players · 1/2</div>
-        <button class="edit-btn">Edit</button>
-      </div>
-
-      <!-- SB post -->
-      <div class="panel">
-        <div class="panel-header"><span class="position-badge">SB</span><span class="stack">199</span></div>
-        <div class="player-name">Player 1</div>
-        <div class="action-options"><div class="action-option chosen post">📤 Post 1</div></div>
-      </div>
-
-      <!-- BB post -->
-      <div class="panel">
-        <div class="panel-header"><span class="position-badge">BB</span><span class="stack">198</span></div>
-        <div class="player-name">Player 2</div>
-        <div class="action-options"><div class="action-option chosen post">📤 Post 2</div></div>
-      </div>
-
-      <!-- Compressed folds -->
-      <div class="panel compressed">
-        <div class="compressed-label">2 folds</div>
-        <div class="compressed-row"><span class="c-pos">UTG</span><span class="c-action">Fold</span><span class="c-stack">[200]</span></div>
-        <div class="compressed-row"><span class="c-pos">HJ</span><span class="c-action">Fold</span><span class="c-stack">[200]</span></div>
-      </div>
-
-      <!-- CO hero raise -->
-      <div class="panel">
-        <div class="panel-header"><span class="position-badge">CO</span><span class="stack">194</span></div>
-        <div class="player-name">Robert <span class="hero-badge">⭐ HERO</span></div>
-        <div class="hole-cards">
-          <div class="hole-card"><span class="rank">A</span><span class="suit suit-s">♠</span></div>
-          <div class="hole-card"><span class="rank">K</span><span class="suit suit-h">♥</span></div>
+      <div class="wb-street collapsed" onclick="this.classList.toggle('collapsed')">
+        <div class="wb-street-header">
+          <span class="wb-chevron">▼</span>
+          <span class="wb-street-name complete-street">Preflop</span>
+          <span class="wb-action-count">6</span>
+          <span class="wb-street-pot">3 → 12 bb</span>
         </div>
-        <div class="action-options">
-          <div class="action-option fold">🔴 Fold</div>
-          <div class="action-option call">🟢 Call 2</div>
-          <div class="action-option chosen raise">🟡 Raise 6</div>
+        <div class="wb-body">
+          <div class="wb-row"><span class="r-pos">SB</span><span class="r-icon">📤</span><span class="r-text post-text">Post 1</span><span class="r-stack">199</span><span class="r-pot">3</span></div>
+          <div class="wb-row"><span class="r-pos">BB</span><span class="r-icon">📤</span><span class="r-text post-text">Post 2</span><span class="r-stack">198</span><span class="r-pot">3</span></div>
+          <div class="wb-row"><span class="r-pos">UTG</span><span class="r-icon">🔴</span><span class="r-text fold-text">Fold</span><span class="r-stack">200</span><span class="r-pot">3</span></div>
+          <div class="wb-row"><span class="r-pos">HJ</span><span class="r-icon">🔴</span><span class="r-text fold-text">Fold</span><span class="r-stack">200</span><span class="r-pot">3</span></div>
+          <div class="wb-row"><span class="r-pos">CO</span><span class="r-icon">🟡</span><span class="r-text raise-text">Raise 6 ⭐</span><span class="r-stack">194</span><span class="r-pot">9</span></div>
+          <div class="wb-row"><span class="r-pos">BTN</span><span class="r-icon">🔴</span><span class="r-text fold-text">Fold</span><span class="r-stack">200</span><span class="r-pot">9</span></div>
+          <div class="wb-row"><span class="r-pos">SB</span><span class="r-icon">🔴</span><span class="r-text fold-text">Fold</span><span class="r-stack">199</span><span class="r-pot">9</span></div>
+          <div class="wb-row"><span class="r-pos">BB</span><span class="r-icon">🟢</span><span class="r-text call-text">Call 4</span><span class="r-stack">194</span><span class="r-pot">12</span></div>
         </div>
       </div>
 
-      <!-- BTN + SB folds compressed -->
-      <div class="panel compressed">
-        <div class="compressed-label">2 folds</div>
-        <div class="compressed-row"><span class="c-pos">BTN</span><span class="c-action">Fold</span><span class="c-stack">[200]</span></div>
-        <div class="compressed-row"><span class="c-pos">SB</span><span class="c-action">Fold</span><span class="c-stack">[199]</span></div>
-      </div>
-
-      <!-- BB call -->
-      <div class="panel">
-        <div class="panel-header"><span class="position-badge">BB</span><span class="stack">194</span></div>
-        <div class="player-name">Player 2</div>
-        <div class="action-options">
-          <div class="action-option fold">🔴 Fold</div>
-          <div class="action-option chosen call">🟢 Call 4</div>
-          <div class="action-option raise">🟡 3-Bet</div>
+      <div class="wb-street" onclick="this.classList.toggle('collapsed')">
+        <div class="wb-street-header">
+          <span class="wb-chevron">▼</span>
+          <span class="wb-street-name active-street">Flop</span>
+          <div class="wb-street-board">
+            <span class="wb-mini-card"><span class="suit-d">A♦</span></span>
+            <span class="wb-mini-card"><span class="suit-c">7♣</span></span>
+            <span class="wb-mini-card"><span class="suit-h">2♥</span></span>
+          </div>
+          <span class="wb-street-pot">12 bb</span>
+        </div>
+        <div class="wb-body">
+          <div class="wb-row"><span class="r-pos">BB</span><span class="r-icon">✅</span><span class="r-text check-text">Check</span><span class="r-stack">194</span><span class="r-pot">12</span></div>
+          <div class="wb-row"><span class="r-pos">CO</span><span class="r-icon">🟡</span><span class="r-text bet-text">Bet 8 ⭐</span><span class="r-stack">186</span><span class="r-pot">20</span></div>
+          <div class="wb-row awaiting"><span class="r-pos">BB</span><span class="r-icon">⏳</span><span class="r-text">Awaiting action...</span></div>
         </div>
       </div>
 
-      <!-- Flop marker -->
-      <div class="panel street-marker">
-        <div class="sm-icon">🃏</div>
-        <div class="sm-label">FLOP</div>
+      <div class="wb-street collapsed">
+        <div class="wb-street-header"><span class="wb-chevron">▼</span><span class="wb-street-name future-street">Turn</span></div>
+        <div class="wb-body"></div>
       </div>
-
-      <!-- BB check (flop) -->
-      <div class="panel">
-        <div class="panel-header"><span class="position-badge">BB</span><span class="stack">194</span></div>
-        <div class="player-name">Player 2</div>
-        <div class="action-options">
-          <div class="action-option chosen check">✅ Check</div>
-          <div class="action-option bet">🟡 Bet</div>
-        </div>
+      <div class="wb-street collapsed">
+        <div class="wb-street-header"><span class="wb-chevron">▼</span><span class="wb-street-name future-street">River</span></div>
+        <div class="wb-body"></div>
       </div>
-
-      <!-- CO bet (flop) -->
-      <div class="panel">
-        <div class="panel-header"><span class="position-badge">CO</span><span class="stack">186</span></div>
-        <div class="player-name">Robert <span class="hero-badge">⭐</span></div>
-        <div class="action-options">
-          <div class="action-option check">✅ Check</div>
-          <div class="action-option chosen bet">🟡 Bet 8</div>
-        </div>
-      </div>
-
-      <!-- BB active -->
-      <div class="panel active">
-        <div class="panel-header"><span class="position-badge">BB</span><span class="stack">194</span></div>
-        <div class="player-name">Player 2</div>
-        <div class="acting-badge">● ACTING</div>
-        <div class="action-options">
-          <div class="action-option available fold-btn">🔴 Fold</div>
-          <div class="action-option available call-btn">🟢 Call 8</div>
-          <div class="action-option available raise-btn">🟡 Raise</div>
-        </div>
-      </div>
-
-      <div style="min-width:30px;flex-shrink:0;"></div>
     </div>
 
-    <div class="tablet-bottom">
-      <div class="tb-pot">Pot: 20 bb</div>
-      <div class="tb-active-info">
-        <span class="tb-pos-badge">BB</span>
-        <div class="tb-info">
-          <div class="name">Player 2</div>
-          <div class="detail">194 bb · To call: 8</div>
+    <div class="resize-handle"><div class="grip"></div></div>
+
+    <div class="bottom-half">
+      <div class="board-bar">
+        <div class="b-card dealt"><span class="rank">A</span><span class="suit suit-d">♦</span></div>
+        <div class="b-card dealt"><span class="rank">7</span><span class="suit suit-c">♣</span></div>
+        <div class="b-card dealt"><span class="rank">2</span><span class="suit suit-h">♥</span></div>
+        <div class="b-card empty">?</div>
+        <div class="b-card empty">?</div>
+      </div>
+
+      <div class="timeline-scroll" id="tablet-tl">
+        <div class="pnl setup-pnl"><div class="g-type">NLHE</div><div class="g-info">6p · 1/2</div><button class="g-edit">Edit</button></div>
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">SB</span><span class="p-stack">199</span></div><div class="p-name">Player 1</div><div class="p-opts"><div class="p-opt chosen o-post">📤 Post 1</div></div></div>
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">BB</span><span class="p-stack">198</span></div><div class="p-name">Player 2</div><div class="p-opts"><div class="p-opt chosen o-post">📤 Post 2</div></div></div>
+        <div class="pnl compressed-pnl"><div class="cp-label">2 folds</div><div class="cp-row"><span class="cp-pos">UTG</span><span class="cp-act">Fold</span></div><div class="cp-row"><span class="cp-pos">HJ</span><span class="cp-act">Fold</span></div></div>
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">CO</span><span class="p-stack">194</span></div><div class="p-name">Robert <span class="p-hero">⭐</span></div><div class="p-holes"><div class="p-hole"><span class="rank">A</span><span class="suit suit-s">♠</span></div><div class="p-hole"><span class="rank">K</span><span class="suit suit-h">♥</span></div></div><div class="p-opts"><div class="p-opt o-fold">🔴 Fold</div><div class="p-opt o-call">🟢 Call 2</div><div class="p-opt chosen o-raise">🟡 Raise 6</div></div></div>
+        <div class="pnl compressed-pnl"><div class="cp-label">2 folds</div><div class="cp-row"><span class="cp-pos">BTN</span><span class="cp-act">Fold</span></div><div class="cp-row"><span class="cp-pos">SB</span><span class="cp-act">Fold</span></div></div>
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">BB</span><span class="p-stack">194</span></div><div class="p-name">Player 2</div><div class="p-opts"><div class="p-opt o-fold">🔴 Fold</div><div class="p-opt chosen o-call">🟢 Call 4</div><div class="p-opt o-raise">🟡 3-Bet</div></div></div>
+        <div class="pnl street-mk"><div class="sm-icon">🃏</div><div class="sm-label">FLOP</div></div>
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">BB</span><span class="p-stack">194</span></div><div class="p-name">Player 2</div><div class="p-opts"><div class="p-opt chosen o-check">✅ Check</div><div class="p-opt o-bet">🟡 Bet</div></div></div>
+        <div class="pnl"><div class="pnl-hdr"><span class="p-badge">CO</span><span class="p-stack">186</span></div><div class="p-name">Robert <span class="p-hero">⭐</span></div><div class="p-opts"><div class="p-opt o-check">✅ Check</div><div class="p-opt chosen o-bet">🟡 Bet 8</div></div></div>
+        <div class="pnl active-pnl"><div class="pnl-hdr"><span class="p-badge">BB</span><span class="p-stack">194</span></div><div class="p-name">Player 2</div><div class="p-acting">● ACTING</div><div class="p-opts"><div class="p-opt avail a-fold">🔴 Fold</div><div class="p-opt avail a-call">🟢 Call 8</div><div class="p-opt avail a-raise">🟡 Raise</div></div></div>
+        <div style="min-width:20px;flex-shrink:0;"></div>
+      </div>
+
+      <div class="bottom-actions">
+        <div class="ba-active">
+          <span class="ba-pos">BB</span>
+          <div><span class="ba-name">Player 2</span><span class="ba-detail"> · 194 bb · Call 8</span></div>
         </div>
+        <div class="ba-btns">
+          <button class="ba-btn ba-fold">✕ FOLD</button>
+          <button class="ba-btn ba-call">CALL 8</button>
+          <button class="ba-btn ba-raise" onclick="this.closest('.bottom-actions').querySelector('.ba-bet-area').classList.toggle('visible')">RAISE</button>
+        </div>
+        <div class="ba-bet-area">
+          <div class="ba-bet-row"><label>Raise to:</label><input type="number" value="16"><span class="unit">bb</span></div>
+          <div class="ba-presets"><button class="ba-preset">33%</button><button class="ba-preset">50%</button><button class="ba-preset">75%</button><button class="ba-preset">Pot</button><button class="ba-preset">All-in</button></div>
+        </div>
+        <button class="ba-undo">↶ Undo: CO bet 8 bb</button>
       </div>
-      <div class="tb-actions">
-        <button class="tb-btn tb-btn-fold">✕ FOLD</button>
-        <button class="tb-btn tb-btn-call">CALL 8</button>
-        <button class="tb-btn tb-btn-raise">RAISE</button>
-      </div>
-      <button class="tb-undo">↶ Undo: CO bet 8</button>
     </div>
   </div>
 </div>
@@ -782,7 +639,6 @@ function showMockup(type) {
   document.querySelectorAll('.picker-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.mockup-frame').forEach(f => f.classList.remove('visible'));
   document.querySelectorAll('.frame-label').forEach(l => l.style.display = 'none');
-
   if (type === 'mobile') {
     document.getElementById('mobile-mockup').classList.add('visible');
     document.getElementById('mobile-label').style.display = 'block';
@@ -793,17 +649,9 @@ function showMockup(type) {
     document.querySelectorAll('.picker-btn')[1].classList.add('active');
   }
 }
-
-// Auto-scroll tablet timeline to the right
 window.addEventListener('load', () => {
-  const tl = document.getElementById('tablet-timeline');
-  if (tl) tl.scrollLeft = tl.scrollWidth;
-
-  // Auto-scroll mobile feed to bottom
-  const feed = document.getElementById('mobile-feed');
-  if (feed) feed.scrollTop = feed.scrollHeight;
+  document.querySelectorAll('.timeline-scroll').forEach(tl => { tl.scrollLeft = tl.scrollWidth; });
 });
 </script>
-
 </body>
 </html>
