@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fold Compression — Slim Panels</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; padding: 24px; }
+  h1 { font-size: 18px; color: #94a3b8; margin-bottom: 8px; }
+  .subtitle { font-size: 13px; color: #64748b; margin-bottom: 24px; }
+
+  /* Community cards */
+  .board { display: flex; gap: 8px; margin-bottom: 20px; align-items: center; }
+  .board-card { width: 48px; height: 68px; border-radius: 6px; background: #1e293b; border: 2px solid #334155; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; }
+  .board-card.dealt { border-color: #475569; background: #1e293b; }
+  .board-card.empty { border-style: dashed; color: #475569; }
+  .pot-label { margin-left: auto; font-size: 14px; color: #94a3b8; font-weight: 600; }
+  .pot-amount { color: #fbbf24; }
+
+  /* Timeline */
+  .timeline { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 16px; align-items: stretch; }
+  .timeline::-webkit-scrollbar { height: 4px; }
+  .timeline::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+  /* Full action panel */
+  .panel { min-width: 110px; max-width: 130px; background: #1e293b; border: 2px solid #334155; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+  .panel.active { border-color: #3b82f6; box-shadow: 0 0 12px rgba(59,130,246,0.25); }
+  .panel.setup { min-width: 100px; background: #172033; border-color: #1e3a5f; }
+
+  .panel-pos { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .panel-action { font-size: 13px; font-weight: 600; padding: 4px 8px; border-radius: 6px; text-align: center; }
+  .panel-stack { font-size: 11px; color: #64748b; text-align: center; }
+
+  .action-fold { background: rgba(220,38,38,0.15); color: #f87171; }
+  .action-call { background: rgba(22,163,74,0.15); color: #4ade80; }
+  .action-raise { background: rgba(217,119,6,0.15); color: #fbbf24; }
+  .action-check { background: rgba(22,163,74,0.15); color: #4ade80; }
+  .action-post { background: rgba(107,114,128,0.15); color: #94a3b8; }
+  .action-pending { background: rgba(59,130,246,0.15); color: #60a5fa; }
+
+  /* === SLIM COMPRESSED FOLD PANEL === */
+  .slim-fold-group {
+    min-width: 44px;
+    max-width: 52px;
+    background: #1a1f2e;
+    border: 2px solid #2a1520;
+    border-radius: 10px;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .slim-fold-group:hover {
+    border-color: #dc2626;
+    background: #1e1525;
+  }
+  .slim-fold-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+  }
+  .slim-fold-pos {
+    font-size: 9px;
+    font-weight: 700;
+    color: #f87171;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .slim-fold-icon {
+    font-size: 8px;
+    color: #dc2626;
+  }
+  .slim-fold-divider {
+    height: 1px;
+    background: #2a1520;
+    margin: 1px 0;
+  }
+  .slim-fold-count {
+    font-size: 9px;
+    color: #64748b;
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  /* Setup panel special */
+  .setup-info { font-size: 11px; color: #64748b; text-align: center; line-height: 1.4; }
+  .setup-label { font-size: 13px; font-weight: 700; color: #60a5fa; text-align: center; }
+
+  /* Annotations */
+  .note { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px 16px; margin-top: 24px; font-size: 13px; color: #94a3b8; line-height: 1.5; }
+  .note strong { color: #e2e8f0; }
+  .label { display: inline-block; background: #7c3aed22; color: #a78bfa; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+  <h1>Fold Compression — Slim Panels</h1>
+  <p class="subtitle">Consecutive folds collapse into a narrow stacked panel. Real decisions keep full panels.</p>
+  <span class="label">MOCKUP A</span>
+
+  <!-- Community Cards -->
+  <div class="board">
+    <div class="board-card dealt" style="color:#e2e8f0">A<span style="color:#1e90ff">♠</span></div>
+    <div class="board-card dealt" style="color:#e2e8f0">K<span style="color:#dc2626">♥</span></div>
+    <div class="board-card dealt" style="color:#e2e8f0">7<span style="color:#3b82f6">♦</span></div>
+    <div class="board-card empty">?</div>
+    <div class="board-card empty">?</div>
+    <div class="pot-label">Pot: <span class="pot-amount">$18</span></div>
+  </div>
+
+  <!-- Preflop Timeline -->
+  <div class="timeline">
+    <!-- Setup -->
+    <div class="panel setup">
+      <div class="setup-label">SETUP</div>
+      <div class="setup-info">9p NLHE<br>1/2 blinds</div>
+    </div>
+
+    <!-- SB Post -->
+    <div class="panel">
+      <div class="panel-pos">SB</div>
+      <div class="panel-action action-post">Post 1</div>
+      <div class="panel-stack">[199]</div>
+    </div>
+
+    <!-- BB Post -->
+    <div class="panel">
+      <div class="panel-pos">BB</div>
+      <div class="panel-action action-post">Post 2</div>
+      <div class="panel-stack">[198]</div>
+    </div>
+
+    <!-- === SLIM FOLD GROUP: UTG, UTG+1, LJ, HJ === -->
+    <div class="slim-fold-group" title="4 folds — tap to expand">
+      <div class="slim-fold-row"><span class="slim-fold-pos">UTG</span></div>
+      <div class="slim-fold-divider"></div>
+      <div class="slim-fold-row"><span class="slim-fold-pos">UTG1</span></div>
+      <div class="slim-fold-divider"></div>
+      <div class="slim-fold-row"><span class="slim-fold-pos">LJ</span></div>
+      <div class="slim-fold-divider"></div>
+      <div class="slim-fold-row"><span class="slim-fold-pos">HJ</span></div>
+      <div class="slim-fold-count">4×fold</div>
+    </div>
+
+    <!-- CO Raise -->
+    <div class="panel">
+      <div class="panel-pos">CO</div>
+      <div class="panel-action action-raise">Raise 6</div>
+      <div class="panel-stack">[94]</div>
+    </div>
+
+    <!-- BTN Fold (single — stays full panel) -->
+    <div class="panel">
+      <div class="panel-pos">BTN</div>
+      <div class="panel-action action-fold">Fold</div>
+      <div class="panel-stack">[100]</div>
+    </div>
+
+    <!-- SB Fold (single — stays full panel) -->
+    <div class="panel">
+      <div class="panel-pos">SB</div>
+      <div class="panel-action action-fold">Fold</div>
+      <div class="panel-stack">[199]</div>
+    </div>
+
+    <!-- BB Call -->
+    <div class="panel">
+      <div class="panel-pos">BB</div>
+      <div class="panel-action action-call">Call 6</div>
+      <div class="panel-stack">[194]</div>
+    </div>
+
+    <!-- Board Card Panel -->
+    <div class="panel" style="border-color:#475569; background:#172033; min-width:140px;">
+      <div class="panel-pos" style="color:#60a5fa;">🃏 FLOP</div>
+      <div style="display:flex; gap:4px; justify-content:center;">
+        <div class="board-card dealt" style="width:36px; height:50px; font-size:14px; color:#e2e8f0">A<span style="color:#1e90ff">♠</span></div>
+        <div class="board-card dealt" style="width:36px; height:50px; font-size:14px; color:#e2e8f0">K<span style="color:#dc2626">♥</span></div>
+        <div class="board-card dealt" style="width:36px; height:50px; font-size:14px; color:#e2e8f0">7<span style="color:#3b82f6">♦</span></div>
+      </div>
+    </div>
+
+    <!-- Flop: BB Check -->
+    <div class="panel">
+      <div class="panel-pos">BB</div>
+      <div class="panel-action action-check">Check</div>
+      <div class="panel-stack">[194]</div>
+    </div>
+
+    <!-- Flop: CO Bet -->
+    <div class="panel">
+      <div class="panel-pos">CO</div>
+      <div class="panel-action action-raise">Bet 9</div>
+      <div class="panel-stack">[85]</div>
+    </div>
+
+    <!-- Flop: BB — Active -->
+    <div class="panel active">
+      <div class="panel-pos">BB</div>
+      <div class="panel-action action-pending">● ACT</div>
+      <div class="panel-stack">[194]</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Slim Panels:</strong> Consecutive folds (UTG through HJ) compress into a single narrow column ~44px wide.
+    Each fold is a visible row with the position label. The group shows a "4×fold" count at the bottom.
+    Hovering highlights the group; tapping would expand back to individual panels (and allow rewind).
+    <br><br>
+    <strong>Single folds</strong> between real actions (BTN, SB) stay as full-width panels — compression only kicks in for 2+ consecutive folds.
+  </div>
+</body>
+</html>
